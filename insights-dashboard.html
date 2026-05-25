@@ -1,0 +1,755 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Customer Insight Atlas</title>
+  <style>
+    :root {
+      --bg: #eef3f7;
+      --panel: rgba(255, 255, 255, 0.86);
+      --panel-strong: #ffffff;
+      --ink: #10233d;
+      --muted: #5f7085;
+      --line: rgba(16, 35, 61, 0.1);
+      --blue: #1163ff;
+      --blue-soft: #dbe8ff;
+      --green: #1fc780;
+      --teal: #0f9aaa;
+      --gold: #f2b13c;
+      --rose: #e86a6a;
+      --shadow: 0 28px 60px rgba(24, 47, 81, 0.12);
+      --radius: 24px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Aptos, "Segoe UI", sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 0% 0%, rgba(17, 99, 255, 0.18), transparent 28%),
+        radial-gradient(circle at 100% 10%, rgba(31, 199, 128, 0.16), transparent 24%),
+        linear-gradient(180deg, #f9fbfd 0%, var(--bg) 100%);
+      min-height: 100vh;
+    }
+
+    .shell {
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 28px 18px 42px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid rgba(255, 255, 255, 0.8);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(16px);
+      border-radius: var(--radius);
+      padding: 24px;
+    }
+
+    .hero-main {
+      position: relative;
+      overflow: hidden;
+      min-height: 272px;
+    }
+
+    .hero-main::after {
+      content: "";
+      position: absolute;
+      right: -40px;
+      bottom: -60px;
+      width: 280px;
+      height: 280px;
+      border-radius: 40px;
+      transform: rotate(28deg);
+      background: linear-gradient(135deg, rgba(17, 99, 255, 0.12), rgba(31, 199, 128, 0.12));
+      pointer-events: none;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--teal);
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      font-size: 0.76rem;
+      margin-bottom: 14px;
+    }
+
+    .eyebrow::before {
+      content: "";
+      width: 34px;
+      height: 2px;
+      border-radius: 999px;
+      background: currentColor;
+    }
+
+    h1, h2, h3 {
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      letter-spacing: -0.02em;
+      font-weight: 600;
+    }
+
+    h1 {
+      font-size: clamp(2.2rem, 4.6vw, 4rem);
+      line-height: 0.98;
+      max-width: 11ch;
+    }
+
+    h2 {
+      font-size: 1.35rem;
+      margin-bottom: 14px;
+    }
+
+    h3 {
+      font-size: 1.05rem;
+      margin-bottom: 12px;
+    }
+
+    .subhead {
+      margin-top: 14px;
+      max-width: 62ch;
+      color: var(--muted);
+      line-height: 1.6;
+      font-size: 1rem;
+    }
+
+    .kpis {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 22px;
+    }
+
+    .kpi {
+      padding: 14px 16px;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.72);
+      border: 1px solid rgba(16, 35, 61, 0.06);
+    }
+
+    .kpi span {
+      display: block;
+    }
+
+    .kpi .label {
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-size: 0.74rem;
+      margin-bottom: 6px;
+    }
+
+    .kpi .value {
+      font-size: 1.5rem;
+      font-weight: 700;
+      line-height: 1.05;
+    }
+
+    .method {
+      display: grid;
+      gap: 14px;
+    }
+
+    .small {
+      color: var(--muted);
+      line-height: 1.6;
+      font-size: 0.92rem;
+    }
+
+    .insights {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .insight-card {
+      padding: 18px;
+      border-radius: 22px;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(246, 250, 253, 0.92));
+      border: 1px solid rgba(16, 35, 61, 0.08);
+      box-shadow: var(--shadow);
+    }
+
+    .insight-label {
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      font-size: 0.72rem;
+      margin-bottom: 10px;
+    }
+
+    .insight-stat {
+      font-size: 2rem;
+      font-weight: 700;
+      line-height: 1;
+      margin-bottom: 10px;
+      color: var(--blue);
+    }
+
+    .insight-text {
+      color: var(--muted);
+      line-height: 1.55;
+      font-size: 0.94rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 0.95fr 1.05fr;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+
+    .cluster-list {
+      display: grid;
+      gap: 12px;
+      max-height: 680px;
+      overflow: auto;
+      padding-right: 6px;
+    }
+
+    .cluster-row {
+      width: 100%;
+      text-align: left;
+      background: rgba(255, 255, 255, 0.76);
+      border: 1px solid transparent;
+      border-radius: 18px;
+      padding: 14px 16px;
+      cursor: pointer;
+      transition: 180ms ease;
+      color: inherit;
+    }
+
+    .cluster-row:hover,
+    .cluster-row.active {
+      transform: translateY(-2px);
+      background: var(--panel-strong);
+      border-color: rgba(17, 99, 255, 0.18);
+    }
+
+    .cluster-topline {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 6px;
+      align-items: baseline;
+    }
+
+    .cluster-name {
+      font-weight: 700;
+      font-size: 1rem;
+    }
+
+    .cluster-share {
+      font-size: 0.84rem;
+      color: var(--muted);
+    }
+
+    .cluster-meta {
+      color: var(--muted);
+      font-size: 0.9rem;
+      line-height: 1.45;
+    }
+
+    .detail-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 14px;
+      margin-bottom: 16px;
+    }
+
+    .tag {
+      border-radius: 999px;
+      background: rgba(17, 99, 255, 0.1);
+      color: var(--blue);
+      padding: 8px 12px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      white-space: nowrap;
+    }
+
+    .metric-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .metric {
+      padding: 14px;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.7);
+      border: 1px solid rgba(16, 35, 61, 0.06);
+    }
+
+    .metric span {
+      display: block;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-size: 0.72rem;
+      margin-bottom: 8px;
+    }
+
+    .metric strong {
+      font-size: 1.18rem;
+    }
+
+    .mini-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-top: 16px;
+    }
+
+    .bars {
+      display: grid;
+      gap: 10px;
+    }
+
+    .bar-row {
+      display: grid;
+      grid-template-columns: 150px 1fr auto;
+      gap: 10px;
+      align-items: center;
+      font-size: 0.9rem;
+    }
+
+    .bar-track {
+      height: 12px;
+      border-radius: 999px;
+      background: rgba(16, 35, 61, 0.08);
+      overflow: hidden;
+    }
+
+    .bar-fill {
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--blue), var(--green));
+    }
+
+    .panel-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+
+    .heatmap {
+      display: grid;
+      gap: 10px;
+    }
+
+    .heatmap-head,
+    .heatmap-row {
+      display: grid;
+      grid-template-columns: 190px repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      align-items: center;
+    }
+
+    .heatmap-head {
+      color: var(--muted);
+      font-size: 0.76rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .heatmap-name {
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+
+    .heat-cell {
+      min-height: 56px;
+      border-radius: 18px;
+      padding: 10px;
+      display: grid;
+      align-content: space-between;
+      color: #0a1630;
+      background: rgba(17, 99, 255, 0.08);
+    }
+
+    .heat-cell strong {
+      font-size: 1rem;
+    }
+
+    .heat-cell span {
+      font-size: 0.78rem;
+      color: rgba(10, 22, 48, 0.76);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th, td {
+      text-align: left;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--line);
+      font-size: 0.92rem;
+    }
+
+    th {
+      color: var(--muted);
+      font-size: 0.76rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .footer {
+      color: var(--muted);
+      font-size: 0.88rem;
+      line-height: 1.6;
+    }
+
+    @media (max-width: 1100px) {
+      .hero,
+      .grid,
+      .panel-grid,
+      .insights {
+        grid-template-columns: 1fr;
+      }
+
+      .heatmap-head,
+      .heatmap-row {
+        grid-template-columns: 160px repeat(4, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 760px) {
+      .shell {
+        padding: 14px 12px 24px;
+      }
+
+      .kpis,
+      .metric-grid,
+      .mini-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .bar-row {
+        grid-template-columns: 1fr;
+      }
+
+      .heatmap-head,
+      .heatmap-row {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <script id="insight-data" type="application/json">{"meta":{"sourceCsv":"C:\\Users\\NathanJeongGilligan\\Downloads\\x0-playground-main-2\\NBA data_2026-05-25-1100.csv","generatedAt":"2026-05-25T01:27:04.342Z","asOfDate":"2026-05-25","rowsWithMismatchedColumns":0},"overview":{"totalCustomers":1313901,"customersWithValue":718045,"activeCustomers":674194,"totalSpend365":1170880999.96,"totalYearlySpend":1045241231.08,"totalValueBase":1185766573.86,"activeValueBase":1173875396.63,"avgKnownRecency":58.4,"knownRecencyShare":51.1,"knownSpendShare":51.9},"clusterSummary":[{"name":"NO OP TRANSACTION","customers":580480,"customerShare":44.2,"spend365":5452109.5,"spend365Share":0.5,"valueBase":5503726.76,"valueShare":0.5,"avgSpend365":9.39,"avgValueBase":9.48,"avgRecency":null,"avgAov":88.75,"avgBrands":1.07,"topChannel":"home delivery","topLifestage":"YOUNG_MULTI_ADULT_HOUSEHOLD","channels":[{"name":"MISSING","value":580120},{"name":"home delivery","value":170},{"name":"click and collect","value":100},{"name":"instore","value":90}],"lifestages":[{"name":"MISSING","value":552447},{"name":"YOUNG_MULTI_ADULT_HOUSEHOLD","value":5222},{"name":"UNKNOWN_SINGLE_PERSON_HOUSEHOLD","value":3544},{"name":"YOUNG_SINGLE_PERSON_HOUSEHOLD","value":3119},{"name":"MID_AGED_FAMILY_WITH_BABY","value":2750},{"name":"YOUNG_COUPLE_HOUSEHOLD","value":2270},{"name":"OLD_COUPLE_HOUSEHOLD","value":1742},{"name":"OLD_SINGLE_PERSON_HOUSEHOLD","value":1568}],"hasKids":[{"name":"MISSING","value":552447},{"name":"FALSE","value":18661},{"name":"TRUE","value":9372}]},{"name":"LOYAL","customers":137338,"customerShare":10.5,"spend365":427711530.6,"spend365Share":36.5,"valueBase":429744686.6,"valueShare":36.2,"avgSpend365":3114.3,"avgValueBase":3129.1,"avgRecency":20.7,"avgAov":81.1,"avgBrands":1.77,"topChannel":"instore","topLifestage":"MID_AGED_FAMILY_WITH_MID_CHILDREN","channels":[{"name":"instore","value":118603},{"name":"home delivery","value":17064},{"name":"click and collect","value":1259},{"name":"no preference","value":347},{"name":"MISSING","value":65}],"lifestages":[{"name":"MID_AGED_FAMILY_WITH_MID_CHILDREN","value":28783},{"name":"OLD_COUPLE_HOUSEHOLD","value":24787},{"name":"MID_AGED_FAMILY_WITH_BABY","value":24169},{"name":"MID_AGED_FAMILY_WITH_YOUNG_CHILDREN","value":20673},{"name":"MID_AGED_FAMILY_WITH_OLD_CHILDREN","value":6746},{"name":"YOUNG_COUPLE_HOUSEHOLD","value":4888},{"name":"OLD_FAMILY_WITH_OLD_CHILDREN","value":4835},{"name":"OLD_SINGLE_PERSON_HOUSEHOLD","value":3960}],"hasKids":[{"name":"TRUE","value":94324},{"name":"FALSE","value":42902},{"name":"MISSING","value":112}]},{"name":"LOST","customers":106763,"customerShare":8.1,"spend365":31938646.56,"spend365Share":2.7,"valueBase":34438973.89,"valueShare":2.9,"avgSpend365":299.15,"avgValueBase":322.57,"avgRecency":204.3,"avgAov":120.3,"avgBrands":1.11,"topChannel":"home delivery","topLifestage":"YOUNG_SINGLE_PERSON_HOUSEHOLD","channels":[{"name":"home delivery","value":48105},{"name":"instore","value":39550},{"name":"click and collect","value":16307},{"name":"no preference","value":2583},{"name":"MISSING","value":218}],"lifestages":[{"name":"YOUNG_SINGLE_PERSON_HOUSEHOLD","value":14997},{"name":"YOUNG_MULTI_ADULT_HOUSEHOLD","value":13907},{"name":"UNKNOWN_SINGLE_PERSON_HOUSEHOLD","value":13479},{"name":"MID_AGED_FAMILY_WITH_BABY","value":10381},{"name":"OLD_COUPLE_HOUSEHOLD","value":7783},{"name":"MID_AGED_FAMILY_WITH_MID_CHILDREN","value":7698},{"name":"YOUNG_COUPLE_HOUSEHOLD","value":7278},{"name":"MID_AGED_FAMILY_WITH_YOUNG_CHILDREN","value":5666}],"hasKids":[{"name":"FALSE","value":67112},{"name":"TRUE","value":39425},{"name":"MISSING","value":226}]},{"name":"CHAMPION","customers":105623,"customerShare":8,"spend365":412403969.13,"spend365Share":35.2,"valueBase":413782503.4,"valueShare":34.9,"avgSpend365":3904.49,"avgValueBase":3917.54,"avgRecency":7.1,"avgAov":80.86,"avgBrands":1.88,"topChannel":"instore","topLifestage":"MID_AGED_FAMILY_WITH_MID_CHILDREN","channels":[{"name":"instore","value":94472},{"name":"home delivery","value":10217},{"name":"click and collect","value":690},{"name":"no preference","value":184},{"name":"MISSING","value":60}],"lifestages":[{"name":"MID_AGED_FAMILY_WITH_MID_CHILDREN","value":21295},{"name":"OLD_COUPLE_HOUSEHOLD","value":20525},{"name":"MID_AGED_FAMILY_WITH_BABY","value":17320},{"name":"MID_AGED_FAMILY_WITH_YOUNG_CHILDREN","value":15912},{"name":"MID_AGED_FAMILY_WITH_OLD_CHILDREN","value":5587},{"name":"YOUNG_COUPLE_HOUSEHOLD","value":4040},{"name":"OLD_FAMILY_WITH_OLD_CHILDREN","value":3930},{"name":"MID_AGED_COUPLE_HOUSEHOLD","value":3155}],"hasKids":[{"name":"TRUE","value":70913},{"name":"FALSE","value":34478},{"name":"MISSING","value":232}]},{"name":"ABOUT TO SLEEP","customers":103722,"customerShare":7.9,"spend365":44069421.58,"spend365Share":3.8,"valueBase":46911050.93,"valueShare":4,"avgSpend365":424.88,"avgValueBase":452.28,"avgRecency":54.5,"avgAov":104.64,"avgBrands":1.18,"topChannel":"instore","topLifestage":"MID_AGED_FAMILY_WITH_BABY","channels":[{"name":"instore","value":58585},{"name":"home delivery","value":35199},{"name":"click and collect","value":7068},{"name":"no preference","value":2722},{"name":"MISSING","value":148}],"lifestages":[{"name":"MID_AGED_FAMILY_WITH_BABY","value":12947},{"name":"OLD_COUPLE_HOUSEHOLD","value":10341},{"name":"MID_AGED_FAMILY_WITH_MID_CHILDREN","value":10056},{"name":"YOUNG_SINGLE_PERSON_HOUSEHOLD","value":9887},{"name":"YOUNG_MULTI_ADULT_HOUSEHOLD","value":9277},{"name":"MID_AGED_FAMILY_WITH_YOUNG_CHILDREN","value":7644},{"name":"UNKNOWN_SINGLE_PERSON_HOUSEHOLD","value":7489},{"name":"YOUNG_COUPLE_HOUSEHOLD","value":7372}],"hasKids":[{"name":"FALSE","value":55288},{"name":"TRUE","value":48162},{"name":"MISSING","value":272}]},{"name":"POTENTIAL LOYALIST","customers":88548,"customerShare":6.7,"spend365":78716880.02,"spend365Share":6.7,"valueBase":80864217.7,"valueShare":6.8,"avgSpend365":888.97,"avgValueBase":913.22,"avgRecency":11.3,"avgAov":89.95,"avgBrands":1.42,"topChannel":"instore","topLifestage":"MID_AGED_FAMILY_WITH_BABY","channels":[{"name":"instore","value":69866},{"name":"home delivery","value":15550},{"name":"click and collect","value":1970},{"name":"no preference","value":1091},{"name":"MISSING","value":71}],"lifestages":[{"name":"MID_AGED_FAMILY_WITH_BABY","value":14526},{"name":"MID_AGED_FAMILY_WITH_MID_CHILDREN","value":12478},{"name":"OLD_COUPLE_HOUSEHOLD","value":12199},{"name":"MID_AGED_FAMILY_WITH_YOUNG_CHILDREN","value":9350},{"name":"YOUNG_COUPLE_HOUSEHOLD","value":5893},{"name":"MID_AGED_FAMILY_WITH_OLD_CHILDREN","value":4094},{"name":"OLD_SINGLE_PERSON_HOUSEHOLD","value":3984},{"name":"YOUNG_SINGLE_PERSON_HOUSEHOLD","value":3687}],"hasKids":[{"name":"TRUE","value":51012},{"name":"FALSE","value":36022},{"name":"MISSING","value":1514}]},{"name":"CANNOT LOSE","customers":71009,"customerShare":5.4,"spend365":116337734.75,"spend365Share":9.9,"valueBase":118825262.52,"valueShare":10,"avgSpend365":1638.35,"avgValueBase":1673.38,"avgRecency":79.5,"avgAov":86.84,"avgBrands":1.45,"topChannel":"instore","topLifestage":"MID_AGED_FAMILY_WITH_MID_CHILDREN","channels":[{"name":"instore","value":54789},{"name":"home delivery","value":13843},{"name":"click and collect","value":1838},{"name":"no preference","value":484},{"name":"MISSING","value":55}],"lifestages":[{"name":"MID_AGED_FAMILY_WITH_MID_CHILDREN","value":12707},{"name":"MID_AGED_FAMILY_WITH_BABY","value":11807},{"name":"OLD_COUPLE_HOUSEHOLD","value":11636},{"name":"MID_AGED_FAMILY_WITH_YOUNG_CHILDREN","value":8805},{"name":"YOUNG_COUPLE_HOUSEHOLD","value":3585},{"name":"MID_AGED_FAMILY_WITH_OLD_CHILDREN","value":3584},{"name":"OLD_SINGLE_PERSON_HOUSEHOLD","value":2925},{"name":"OLD_FAMILY_WITH_OLD_CHILDREN","value":2268}],"hasKids":[{"name":"TRUE","value":45225},{"name":"FALSE","value":25663},{"name":"MISSING","value":121}]},{"name":"MISSING","customers":47979,"customerShare":3.7,"spend365":2990984.16,"spend365Share":0.3,"valueBase":2991259.16,"valueShare":0.3,"avgSpend365":62.34,"avgValueBase":62.35,"avgRecency":null,"avgAov":105.07,"avgBrands":1.29,"topChannel":"Unknown","topLifestage":"OLD_COUPLE_HOUSEHOLD","channels":[{"name":"MISSING","value":47979}],"lifestages":[{"name":"MISSING","value":47965},{"name":"OLD_COUPLE_HOUSEHOLD","value":2},{"name":"MID_AGED_FAMILY_WITH_YOUNG_CHILDREN","value":2},{"name":"OLD_SINGLE_PERSON_HOUSEHOLD","value":2},{"name":"MID_AGED_FAMILY_WITH_BABY","value":2},{"name":"OLD_FAMILY_WITH_OLD_CHILDREN","value":2},{"name":"YOUNG_MULTI_ADULT_HOUSEHOLD","value":1},{"name":"YOUNG_FAMILY_WITH_OLD_CHILDREN","value":1}],"hasKids":[{"name":"MISSING","value":47965},{"name":"TRUE","value":8},{"name":"FALSE","value":6}]},{"name":"NEED ATTENTION","customers":37769,"customerShare":2.9,"spend365":41063013.61,"spend365Share":3.5,"valueBase":42243392.91,"valueShare":3.6,"avgSpend365":1087.21,"avgValueBase":1118.47,"avgRecency":29.5,"avgAov":86.77,"avgBrands":1.39,"topChannel":"instore","topLifestage":"MID_AGED_FAMILY_WITH_BABY","channels":[{"name":"instore","value":30290},{"name":"home delivery","value":6379},{"name":"click and collect","value":800},{"name":"no preference","value":278},{"name":"MISSING","value":22}],"lifestages":[{"name":"MID_AGED_FAMILY_WITH_BABY","value":6785},{"name":"MID_AGED_FAMILY_WITH_MID_CHILDREN","value":6470},{"name":"OLD_COUPLE_HOUSEHOLD","value":5726},{"name":"MID_AGED_FAMILY_WITH_YOUNG_CHILDREN","value":4802},{"name":"YOUNG_COUPLE_HOUSEHOLD","value":2153},{"name":"MID_AGED_FAMILY_WITH_OLD_CHILDREN","value":1878},{"name":"OLD_SINGLE_PERSON_HOUSEHOLD","value":1614},{"name":"OLD_FAMILY_WITH_OLD_CHILDREN","value":1189}],"hasKids":[{"name":"TRUE","value":24341},{"name":"FALSE","value":13376},{"name":"MISSING","value":52}]},{"name":"NEW CUSTOMER","customers":30953,"customerShare":2.4,"spend365":6838126.3,"spend365Share":0.6,"valueBase":7065308.68,"valueShare":0.6,"avgSpend365":220.92,"avgValueBase":228.26,"avgRecency":19.3,"avgAov":92.93,"avgBrands":1.33,"topChannel":"instore","topLifestage":"YOUNG_MULTI_ADULT_HOUSEHOLD","channels":[{"name":"instore","value":11009},{"name":"MISSING","value":10688},{"name":"home delivery","value":7584},{"name":"click and collect","value":1164},{"name":"no preference","value":508}],"lifestages":[{"name":"MISSING","value":18807},{"name":"YOUNG_MULTI_ADULT_HOUSEHOLD","value":1693},{"name":"YOUNG_SINGLE_PERSON_HOUSEHOLD","value":1611},{"name":"UNKNOWN_SINGLE_PERSON_HOUSEHOLD","value":1488},{"name":"MID_AGED_FAMILY_WITH_BABY","value":1330},{"name":"YOUNG_COUPLE_HOUSEHOLD","value":892},{"name":"OLD_COUPLE_HOUSEHOLD","value":806},{"name":"MID_AGED_FAMILY_WITH_MID_CHILDREN","value":758}],"hasKids":[{"name":"MISSING","value":18807},{"name":"FALSE","value":7529},{"name":"TRUE","value":4617}]},{"name":"DROPSHIP EXCLUDED","customers":3717,"customerShare":0.3,"spend365":3304969.77,"spend365Share":0.3,"valueBase":3396191.31,"valueShare":0.3,"avgSpend365":889.15,"avgValueBase":913.69,"avgRecency":null,"avgAov":18.46,"avgBrands":1.28,"topChannel":"home delivery","topLifestage":"YOUNG_FAMILY_WITH_BABY","channels":[{"name":"MISSING","value":1876},{"name":"home delivery","value":1772},{"name":"instore","value":63},{"name":"click and collect","value":4},{"name":"no preference","value":2}],"lifestages":[{"name":"MISSING","value":1755},{"name":"YOUNG_FAMILY_WITH_BABY","value":429},{"name":"YOUNG_SINGLE_PERSON_HOUSEHOLD","value":290},{"name":"MID_AGED_FAMILY_WITH_BABY","value":233},{"name":"OLD_SINGLE_PERSON_HOUSEHOLD","value":141},{"name":"YOUNG_MULTI_ADULT_HOUSEHOLD","value":112},{"name":"YOUNG_COUPLE_HOUSEHOLD","value":101},{"name":"YOUNG_FAMILY_WITH_MID_CHILDREN","value":88}],"hasKids":[{"name":"MISSING","value":1755},{"name":"TRUE","value":1078},{"name":"FALSE","value":884}]}],"channelSummary":[{"name":"MISSING","customers":641302,"customerShare":48.8,"spend365":9709789.97,"spend365Share":0.8,"valueBase":9798684.67,"valueShare":0.8,"avgSpend365":15.14,"avgValueBase":15.28,"avgRecency":90.1,"avgAov":96.96,"avgBrands":1.16,"topChannel":"Unknown","topLifestage":"Unknown","channels":[],"lifestages":[],"hasKids":[]},{"name":"instore","customers":477317,"customerShare":36.3,"spend365":994677139.23,"spend365Share":85,"valueBase":1006994543.14,"valueShare":84.9,"avgSpend365":2083.89,"avgValueBase":2109.7,"avgRecency":41.4,"avgAov":88.48,"avgBrands":1.58,"topChannel":"Unknown","topLifestage":"Unknown","channels":[],"lifestages":[],"hasKids":[]},{"name":"home delivery","customers":155883,"customerShare":11.9,"spend365":139996482.36,"spend365Share":12,"valueBase":142041014.49,"valueShare":12,"avgSpend365":898.09,"avgValueBase":911.2,"avgRecency":93.2,"avgAov":91.92,"avgBrands":1.3,"topChannel":"Unknown","topLifestage":"Unknown","channels":[],"lifestages":[],"hasKids":[]},{"name":"click and collect","customers":31200,"customerShare":2.4,"spend365":21446327.1,"spend365Share":1.8,"valueBase":21815576.43,"valueShare":1.8,"avgSpend365":687.38,"avgValueBase":699.22,"avgRecency":139.5,"avgAov":149.99,"avgBrands":1.17,"topChannel":"Unknown","topLifestage":"Unknown","channels":[],"lifestages":[],"hasKids":[]},{"name":"no preference","customers":8199,"customerShare":0.6,"spend365":4997647.32,"spend365Share":0.4,"valueBase":5116755.13,"valueShare":0.4,"avgSpend365":609.54,"avgValueBase":624.07,"avgRecency":88.7,"avgAov":101.26,"avgBrands":1.28,"topChannel":"Unknown","topLifestage":"Unknown","channels":[],"lifestages":[],"hasKids":[]}],"lifestageSummary":[{"name":"MISSING","customers":623503,"customerShare":47.5,"spend365":9450006.8,"spend365Share":0.8,"valueBase":9570923.64,"valueShare":0.8,"avgSpend365":15.16,"avgValueBase":15.35,"avgRecency":18.6,"avgAov":100.04,"avgBrands":1.27,"topChannel":"Unknown","topLifestage":"Unknown","channels":[],"lifestages":[],"hasKids":[]},{"name":"MID_AGED_FAMILY_WITH_BABY","customers":102250,"customerShare":7.8,"spend365":182906715.31,"spend365Share":15.6,"valueBase":185312530.1,"valueShare":15.6,"avgSpend365":1788.82,"avgValueBase":1812.35,"avgRecency":46.8,"avgAov":84.06,"avgBrands":1.58,"topChannel":"Unknown","topLifestage":"Unknown","channels":[],"lifestages":[],"hasKids":[]},{"name":"MID_AGED_FAMILY_WITH_MID_CHILDREN","customers":101697,"customerShare":7.7,"spend365":229160875.31,"spend365Share":19.6,"valueBase":232451872.59,"valueShare":19.6,"avgSpend365":2253.37,"avgValueBase":2285.73,"avgRecency":40.6,"avgAov":86.48,"avgBrands":1.65,"topChannel":"Unknown","topLifestage":"Unknown","channels":[],"lifestages":[],"hasKids":[]},{"name":"OLD_COUPLE_HOUSEHOLD","customers":95633,"customerShare":7.3,"spend365":205152923.08,"spend365Share":17.5,"valueBase":206320020.67,"valueShare":17.4,"avgSpend365":2145.21,"avgValueBase":2157.41,"avgRecency":42.4,"avgAov":86.86,"avgBrands":1.48,"topChannel":"Unknown","topLifestage":"Unknown","channels":[],"lifestages":[],"hasKids":[]},{"name":"MID_AGED_FAMILY_WITH_YOUNG_CHILDREN","customers":74754,"customerShare":5.7,"spend365":158422220.35,"spend365Share":13.5,"valueBase":160923167.36,"valueShare":13.6,"avgSpend365":2119.25,"avgValueBase":2152.7,"avgRecency":40.2,"avgAov":83.72,"avgBrands":1.65,"topChannel":"Unknown","topLifestage":"Unknown","channels":[],"lifestages":[],"hasKids":[]},{"name":"YOUNG_COUPLE_HOUSEHOLD","customers":38472,"customerShare":2.9,"spend365":52755597.26,"spend365Share":4.5,"valueBase":53542151.77,"valueShare":4.5,"avgSpend365":1371.27,"avgValueBase":1391.72,"avgRecency":67.8,"avgAov":99.12,"avgBrands":1.36,"topChannel":"Unknown","topLifestage":"Unknown","channels":[],"lifestages":[],"hasKids":[]},{"name":"YOUNG_SINGLE_PERSON_HOUSEHOLD","customers":38125,"customerShare":2.9,"spend365":19487800.11,"spend365Share":1.7,"valueBase":19996801.03,"valueShare":1.7,"avgSpend365":511.16,"avgValueBase":524.51,"avgRecency":121.5,"avgAov":95.77,"avgBrands":1.17,"topChannel":"Unknown","topLifestage":"Unknown","channels":[],"lifestages":[],"hasKids":[]},{"name":"YOUNG_MULTI_ADULT_HOUSEHOLD","customers":36335,"customerShare":2.8,"spend365":16984656.27,"spend365Share":1.5,"valueBase":17568737.67,"valueShare":1.5,"avgSpend365":467.45,"avgValueBase":483.52,"avgRecency":118.7,"avgAov":150.16,"avgBrands":1.14,"topChannel":"Unknown","topLifestage":"Unknown","channels":[],"lifestages":[],"hasKids":[]},{"name":"MID_AGED_FAMILY_WITH_OLD_CHILDREN","customers":29226,"customerShare":2.2,"spend365":61640113.55,"spend365Share":5.3,"valueBase":62413268.68,"valueShare":5.3,"avgSpend365":2109.08,"avgValueBase":2135.54,"avgRecency":43.6,"avgAov":89.35,"avgBrands":1.6,"topChannel":"Unknown","topLifestage":"Unknown","channels":[],"lifestages":[],"hasKids":[]},{"name":"OLD_SINGLE_PERSON_HOUSEHOLD","customers":28831,"customerShare":2.2,"spend365":31951456.44,"spend365Share":2.7,"valueBase":32358544.6,"valueShare":2.7,"avgSpend365":1108.23,"avgValueBase":1122.35,"avgRecency":71.7,"avgAov":87.71,"avgBrands":1.34,"topChannel":"Unknown","topLifestage":"Unknown","channels":[],"lifestages":[],"hasKids":[]},{"name":"UNKNOWN_SINGLE_PERSON_HOUSEHOLD","customers":28324,"customerShare":2.2,"spend365":7634097.8,"spend365Share":0.7,"valueBase":7812980.99,"valueShare":0.7,"avgSpend365":269.53,"avgValueBase":275.84,"avgRecency":138,"avgAov":121.85,"avgBrands":1.06,"topChannel":"Unknown","topLifestage":"Unknown","channels":[],"lifestages":[],"hasKids":[]},{"name":"OLD_FAMILY_WITH_OLD_CHILDREN","customers":18590,"customerShare":1.4,"spend365":40570798.07,"spend365Share":3.5,"valueBase":40957642.89,"valueShare":3.5,"avgSpend365":2182.4,"avgValueBase":2203.21,"avgRecency":40.9,"avgAov":87.27,"avgBrands":1.58,"topChannel":"Unknown","topLifestage":"Unknown","channels":[],"lifestages":[],"hasKids":[]},{"name":"MID_AGED_COUPLE_HOUSEHOLD","customers":15151,"customerShare":1.2,"spend365":35104230.71,"spend365Share":3,"valueBase":35358646.49,"valueShare":3,"avgSpend365":2316.96,"avgValueBase":2333.75,"avgRecency":43.8,"avgAov":90.81,"avgBrands":1.56,"topChannel":"Unknown","topLifestage":"Unknown","channels":[],"lifestages":[],"hasKids":[]},{"name":"YOUNG_FAMILY_WITH_BABY","customers":14311,"customerShare":1.1,"spend365":16493129.33,"spend365Share":1.4,"valueBase":16760464.72,"valueShare":1.4,"avgSpend365":1152.48,"avgValueBase":1171.16,"avgRecency":74,"avgAov":90.91,"avgBrands":1.36,"topChannel":"Unknown","topLifestage":"Unknown","channels":[],"lifestages":[],"hasKids":[]},{"name":"OLD_MULTI_ADULT_HOUSEHOLD","customers":14211,"customerShare":1.1,"spend365":17902350.94,"spend365Share":1.5,"valueBase":18157534.86,"valueShare":1.5,"avgSpend365":1259.75,"avgValueBase":1277.71,"avgRecency":64.3,"avgAov":97.06,"avgBrands":1.38,"topChannel":"Unknown","topLifestage":"Unknown","channels":[],"lifestages":[],"hasKids":[]}],"hasKidsSummary":[{"name":"MISSING","customers":623503,"customerShare":47.5,"spend365":9450006.8,"spend365Share":0.8,"valueBase":9570923.64,"valueShare":0.8,"avgSpend365":15.16,"avgValueBase":15.35,"avgRecency":18.6,"avgAov":100.04,"avgBrands":1.27,"topChannel":"Unknown","topLifestage":"Unknown","channels":[],"lifestages":[],"hasKids":[]},{"name":"TRUE","customers":388477,"customerShare":29.6,"spend365":761641771.18,"spend365Share":65,"valueBase":772107297.21,"valueShare":65.1,"avgSpend365":1960.58,"avgValueBase":1987.52,"avgRecency":46.6,"avgAov":85.68,"avgBrands":1.58,"topChannel":"Unknown","topLifestage":"Unknown","channels":[],"lifestages":[],"hasKids":[]},{"name":"FALSE","customers":301921,"customerShare":23,"spend365":399735608,"spend365Share":34.1,"valueBase":404088353.01,"valueShare":34.1,"avgSpend365":1323.97,"avgValueBase":1338.39,"avgRecency":75.8,"avgAov":100.65,"avgBrands":1.34,"topChannel":"Unknown","topLifestage":"Unknown","channels":[],"lifestages":[],"hasKids":[]}],"recencySummary":[{"name":"0-7 days","customers":93767,"share":7.1},{"name":"8-30 days","customers":280631,"share":21.4},{"name":"31-90 days","customers":157462,"share":12},{"name":"91-180 days","customers":81546,"share":6.2},{"name":"181+ days","customers":57677,"share":4.4},{"name":"Missing","customers":642818,"share":48.9}],"spendSummary":[{"name":"0 or missing","customers":631680,"share":48.1},{"name":"$0-$100","customers":105974,"share":8.1},{"name":"$101-$500","customers":169880,"share":12.9},{"name":"$501-$1k","customers":102622,"share":7.8},{"name":"$1k-$5k","customers":251583,"share":19.1},{"name":"$5k+","customers":52162,"share":4}],"brandLinkSummary":[{"name":"Kmart","linkedCount":535257,"notLinkedCount":137342,"missingCount":641302,"linkedShareKnown":79.6,"missingShare":48.8,"linkedValue":1047098065.7,"avgLinkedValue":1956.25},{"name":"Target","linkedCount":435519,"notLinkedCount":237080,"missingCount":641302,"linkedShareKnown":64.8,"missingShare":48.8,"linkedValue":920921734.34,"avgLinkedValue":2114.54},{"name":"Bunnings","linkedCount":429050,"notLinkedCount":243549,"missingCount":641302,"linkedShareKnown":63.8,"missingShare":48.8,"linkedValue":960600299.39,"avgLinkedValue":2238.9},{"name":"Officeworks","linkedCount":359687,"notLinkedCount":312912,"missingCount":641302,"linkedShareKnown":53.5,"missingShare":48.8,"linkedValue":841314691.59,"avgLinkedValue":2339.02}],"completenessSummary":[{"field":"Recency","knownCount":671083,"missingCount":642818,"knownShare":51.1},{"field":"Shopping preference","knownCount":672599,"missingCount":641302,"knownShare":51.2},{"field":"Last transaction date","knownCount":672599,"missingCount":641302,"knownShare":51.2},{"field":"Flybuys linked","knownCount":672599,"missingCount":641302,"knownShare":51.2},{"field":"Spend 365d","knownCount":682512,"missingCount":631389,"knownShare":51.9},{"field":"AOV","knownCount":682512,"missingCount":631389,"knownShare":51.9},{"field":"Has kids","knownCount":690398,"missingCount":623503,"knownShare":52.5},{"field":"Lifestage","knownCount":690398,"missingCount":623503,"knownShare":52.5},{"field":"Cluster","knownCount":1265922,"missingCount":47979,"knownShare":96.3}],"heatmap":{"channels":["instore","home delivery","click and collect","no preference"],"clusters":[{"name":"LOYAL","values":[118603,17064,1259,347]},{"name":"CHAMPION","values":[94472,10217,690,184]},{"name":"CANNOT LOSE","values":[54789,13843,1838,484]},{"name":"POTENTIAL LOYALIST","values":[69866,15550,1970,1091]},{"name":"ABOUT TO SLEEP","values":[58585,35199,7068,2722]},{"name":"NEED ATTENTION","values":[30290,6379,800,278]}]},"insightCards":[{"title":"Large inactive block","stat":"44.2%","body":"\"NO OP TRANSACTION\" represents 580,480 customers, making it the biggest volume pool in the file."},{"title":"Value is concentrated","stat":"81.2%","body":"LOYAL, CHAMPION, CANNOT LOSE account for most of the blended value pool."},{"title":"Instore dominates known preference","stat":"71%","body":"Among customers with a known preference, instore is still the primary channel by a wide margin."},{"title":"Family households matter","stat":"56.3%","body":"Customers flagged with kids outnumber non-kids in the known file and average higher blended value per customer."},{"title":"Strongest known brand linkage","stat":"79.6%","body":"Kmart has the highest linked share among customers with a known linked-brand flag."},{"title":"Largest known lifestage","stat":"16.1%","body":"MID AGED FAMILY WITH BABY is the largest named lifestage in the file."}]}</script>
+  <div class="shell">
+    <section class="hero">
+      <article class="panel hero-main">
+        <div class="eyebrow">Customer Insight Atlas</div>
+        <h1>A pure data breakdown of what is inside the customer file.</h1>
+        <p class="subhead">
+          This dashboard is exploratory rather than prescriptive. It surfaces where customers sit across lifecycle,
+          value, channel, household type, and linked-brand coverage so you can inspect the shape of the dataset before
+          deciding what to do with it.
+        </p>
+        <div class="kpis" id="kpis"></div>
+      </article>
+      <article class="panel">
+        <h2>Reading guide</h2>
+        <div class="method">
+          <p class="small">
+            "Blended value" uses <code>TOTAL_SPEND_365D</code> first, then falls back to <code>TOTAL_YEARLY_SPEND</code>,
+            then <code>MONETARY</code> when current spend is not populated.
+          </p>
+          <p class="small">
+            The cluster explorer below is interactive. Click any cluster to inspect its value profile, channel mix,
+            lifestages, and family composition.
+          </p>
+          <p class="small" id="meta"></p>
+        </div>
+      </article>
+    </section>
+
+    <section class="insights" id="insights"></section>
+
+    <section class="grid">
+      <article class="panel">
+        <h2>Lifecycle Clusters</h2>
+        <div class="cluster-list" id="cluster-list"></div>
+      </article>
+      <article class="panel">
+        <div class="detail-head">
+          <div>
+            <h2 id="detail-name"></h2>
+            <p class="small" id="detail-copy"></p>
+          </div>
+          <div class="tag" id="detail-tag"></div>
+        </div>
+        <div class="metric-grid" id="detail-metrics"></div>
+        <div class="mini-grid">
+          <div>
+            <h3>Channel mix</h3>
+            <div class="bars" id="detail-channels"></div>
+          </div>
+          <div>
+            <h3>Household mix</h3>
+            <div class="bars" id="detail-kids"></div>
+          </div>
+        </div>
+        <div style="margin-top:16px;">
+          <h3>Top lifestages</h3>
+          <div class="bars" id="detail-lifestages"></div>
+        </div>
+      </article>
+    </section>
+
+    <section class="panel-grid">
+      <article class="panel">
+        <h2>Active Cluster x Channel Heatmap</h2>
+        <div class="heatmap" id="heatmap"></div>
+      </article>
+      <article class="panel">
+        <h2>Recency and Spend Mix</h2>
+        <div class="mini-grid">
+          <div>
+            <h3>Recency buckets</h3>
+            <div class="bars" id="recency-bars"></div>
+          </div>
+          <div>
+            <h3>Spend buckets</h3>
+            <div class="bars" id="spend-bars"></div>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <section class="panel-grid">
+      <article class="panel">
+        <h2>Linked Brand Coverage</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Brand</th>
+              <th>Linked count</th>
+              <th>Linked share of known</th>
+              <th>Avg linked value</th>
+              <th>Missing share</th>
+            </tr>
+          </thead>
+          <tbody id="brand-table"></tbody>
+        </table>
+      </article>
+      <article class="panel">
+        <h2>Data Completeness</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Field</th>
+              <th>Known count</th>
+              <th>Known share</th>
+            </tr>
+          </thead>
+          <tbody id="completeness-table"></tbody>
+        </table>
+      </article>
+    </section>
+
+    <section class="panel-grid">
+      <article class="panel">
+        <h2>Top Shopping Preferences</h2>
+        <div class="bars" id="channel-bars"></div>
+      </article>
+      <article class="panel">
+        <h2>Top Lifestages</h2>
+        <div class="bars" id="lifestage-bars"></div>
+      </article>
+    </section>
+
+    <p class="footer">
+      Generated from the source CSV on 25/05/2026, 11:27:04 am. This is an insights dashboard only. It does not recommend actions and it does not attempt prediction.
+    </p>
+  </div>
+
+  <script>
+    const data = JSON.parse(document.getElementById('insight-data').textContent);
+    const currency = new Intl.NumberFormat('en-AU', { style: 'currency', currency: 'AUD', maximumFractionDigits: 0 });
+    const integer = new Intl.NumberFormat('en-AU');
+
+    function setText(id, value) {
+      document.getElementById(id).textContent = value;
+    }
+
+    function renderKpis() {
+      const cards = [
+        ['Total customers', integer.format(data.overview.totalCustomers)],
+        ['Customers with value', integer.format(data.overview.customersWithValue)],
+        ['Active customers', integer.format(data.overview.activeCustomers)],
+        ['Total spend 365d', currency.format(data.overview.totalSpend365)],
+        ['Blended value pool', currency.format(data.overview.totalValueBase)],
+        ['Avg known recency', data.overview.avgKnownRecency + ' days'],
+      ];
+
+      document.getElementById('kpis').innerHTML = cards.map(([label, value]) => `
+        <div class="kpi">
+          <span class="label">${label}</span>
+          <span class="value">${value}</span>
+        </div>
+      `).join('');
+    }
+
+    function renderInsights() {
+      document.getElementById('insights').innerHTML = data.insightCards.map((item) => `
+        <article class="insight-card">
+          <div class="insight-label">${item.title}</div>
+          <div class="insight-stat">${item.stat}</div>
+          <div class="insight-text">${item.body}</div>
+        </article>
+      `).join('');
+    }
+
+    function renderClusterList() {
+      const container = document.getElementById('cluster-list');
+      container.innerHTML = data.clusterSummary.map((cluster) => `
+        <button class="cluster-row" type="button" data-cluster="${cluster.name}">
+          <div class="cluster-topline">
+            <div class="cluster-name">${cluster.name}</div>
+            <div class="cluster-share">${cluster.customerShare}% of customers</div>
+          </div>
+          <div class="cluster-meta">
+            ${integer.format(cluster.customers)} customers - ${currency.format(cluster.valueBase)} blended value -
+            avg recency ${cluster.avgRecency === null ? 'n/a' : cluster.avgRecency + 'd'}
+          </div>
+        </button>
+      `).join('');
+
+      container.querySelectorAll('.cluster-row').forEach((button) => {
+        button.addEventListener('click', () => selectCluster(button.dataset.cluster));
+      });
+    }
+
+    function renderBarList(targetId, items, valueKey, labelKey = 'name', valueFormatter = integer.format.bind(integer), palette = 'linear-gradient(90deg, #1163ff, #1fc780)') {
+      const max = Math.max(...items.map((item) => item[valueKey]), 1);
+      document.getElementById(targetId).innerHTML = items.map((item) => {
+        const width = Math.max((item[valueKey] / max) * 100, 2);
+        return `
+          <div class="bar-row">
+            <div>${item[labelKey]}</div>
+            <div class="bar-track"><div class="bar-fill" style="width:${width}%; background:${palette};"></div></div>
+            <strong>${valueFormatter(item[valueKey])}</strong>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function selectCluster(name) {
+      const cluster = data.clusterSummary.find((item) => item.name === name) || data.clusterSummary[0];
+      document.querySelectorAll('.cluster-row').forEach((node) => {
+        node.classList.toggle('active', node.dataset.cluster === cluster.name);
+      });
+
+      setText('detail-name', cluster.name);
+      setText(
+        'detail-copy',
+        `${integer.format(cluster.customers)} customers, ${cluster.customerShare}% of the file, ${cluster.valueShare}% of the blended value pool.`
+      );
+      setText('detail-tag', cluster.topChannel === 'Unknown' ? 'Channel unknown' : cluster.topChannel);
+
+      const metrics = [
+        ['Blended value', currency.format(cluster.valueBase)],
+        ['Total spend 365d', currency.format(cluster.spend365)],
+        ['Avg value', currency.format(cluster.avgValueBase)],
+        ['Avg spend 365d', currency.format(cluster.avgSpend365)],
+        ['Avg recency', cluster.avgRecency === null ? 'n/a' : cluster.avgRecency + ' days'],
+        ['Avg AOV', cluster.avgAov === null ? 'n/a' : currency.format(cluster.avgAov)],
+      ];
+
+      document.getElementById('detail-metrics').innerHTML = metrics.map(([label, value]) => `
+        <div class="metric">
+          <span>${label}</span>
+          <strong>${value}</strong>
+        </div>
+      `).join('');
+
+      renderBarList('detail-channels', cluster.channels.slice(0, 5), 'value', 'name', integer.format.bind(integer), 'linear-gradient(90deg, #1163ff, #7ab8ff)');
+      renderBarList('detail-kids', cluster.hasKids, 'value', 'name', integer.format.bind(integer), 'linear-gradient(90deg, #1fc780, #91dfb8)');
+      renderBarList('detail-lifestages', cluster.lifestages.slice(0, 5), 'value', 'name', integer.format.bind(integer), 'linear-gradient(90deg, #f2b13c, #ffd88f)');
+    }
+
+    function renderHeatmap() {
+      const max = Math.max(...data.heatmap.clusters.flatMap((cluster) => cluster.values), 1);
+      const head = `
+        <div class="heatmap-head">
+          <div></div>
+          ${data.heatmap.channels.map((channel) => `<div>${channel}</div>`).join('')}
+        </div>
+      `;
+
+      const rows = data.heatmap.clusters.map((cluster) => `
+        <div class="heatmap-row">
+          <div class="heatmap-name">${cluster.name}</div>
+          ${cluster.values.map((value) => {
+            const alpha = Math.max(value / max, 0.08);
+            return `<div class="heat-cell" style="background: rgba(17, 99, 255, ${alpha.toFixed(3)});">
+              <strong>${integer.format(value)}</strong>
+              <span>customers</span>
+            </div>`;
+          }).join('')}
+        </div>
+      `).join('');
+
+      document.getElementById('heatmap').innerHTML = head + rows;
+    }
+
+    function renderTables() {
+      document.getElementById('brand-table').innerHTML = data.brandLinkSummary.map((brand) => `
+        <tr>
+          <td>${brand.name}</td>
+          <td>${integer.format(brand.linkedCount)}</td>
+          <td>${brand.linkedShareKnown}%</td>
+          <td>${currency.format(brand.avgLinkedValue)}</td>
+          <td>${brand.missingShare}%</td>
+        </tr>
+      `).join('');
+
+      document.getElementById('completeness-table').innerHTML = data.completenessSummary.map((field) => `
+        <tr>
+          <td>${field.field}</td>
+          <td>${integer.format(field.knownCount)}</td>
+          <td>${field.knownShare}%</td>
+        </tr>
+      `).join('');
+    }
+
+    renderKpis();
+    renderInsights();
+    renderClusterList();
+    renderHeatmap();
+    renderTables();
+    renderBarList('recency-bars', data.recencySummary, 'customers');
+    renderBarList('spend-bars', data.spendSummary, 'customers', 'name', integer.format.bind(integer), 'linear-gradient(90deg, #0f9aaa, #1fc780)');
+    renderBarList('channel-bars', data.channelSummary.slice(0, 5), 'customers');
+    renderBarList('lifestage-bars', data.lifestageSummary.filter((item) => item.name !== 'MISSING').slice(0, 8), 'customers', 'name', integer.format.bind(integer), 'linear-gradient(90deg, #f2b13c, #ffd88f)');
+    setText('meta', `Source: ${data.meta.sourceCsv}. Rows with column mismatch: ${data.meta.rowsWithMismatchedColumns}.`);
+    const defaultCluster = data.clusterSummary.find((item) => !['NO OP TRANSACTION', 'MISSING', 'DROPSHIP EXCLUDED'].includes(item.name)) || data.clusterSummary[0];
+    selectCluster(defaultCluster.name);
+  </script>
+</body>
+</html>
