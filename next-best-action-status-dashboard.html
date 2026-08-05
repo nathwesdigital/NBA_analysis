@@ -1,0 +1,442 @@
+<style>
+  .nba-dashboard {
+    --green-900: #073f33;
+    --green-700: #008540;
+    --green-600: #2f9d62;
+    --green-100: #e8f3eb;
+    --green-050: #f4faf6;
+    --ink: #202524;
+    --body: #3f4845;
+    --muted: #697470;
+    --line: #dbe3df;
+    --paper: #fff;
+    --field: #f2f5f2;
+    --blue-700: #095d7d;
+    --blue-100: #e4f1f6;
+    --gold-700: #9a7a18;
+    --gold-100: #f7efd2;
+    --red-700: #a83b2d;
+    --red-100: #fbe7e3;
+    --shadow: 0 8px 28px rgba(19, 42, 36, .08);
+    width: min(1440px, calc(100vw - 36px));
+    margin: 0 auto;
+    color: var(--ink);
+    font-family: "Aptos", "Segoe UI", sans-serif;
+    line-height: 1.42;
+  }
+  .nba-dashboard *, .nba-dashboard *::before, .nba-dashboard *::after { box-sizing: border-box; }
+  .nba-canvas { overflow: hidden; border: 1px solid var(--line); border-radius: 8px; background: linear-gradient(90deg, rgba(0,133,64,.08) 1px, transparent 1px), linear-gradient(0deg, rgba(0,133,64,.07) 1px, transparent 1px), var(--field); background-size: 44px 44px; }
+  .nba-hero { color: #fff; background: linear-gradient(135deg, rgba(0,175,104,.22), transparent 48%), var(--green-900); border-bottom: 6px solid var(--green-700); box-shadow: 0 18px 60px rgba(11,40,34,.12); }
+  .nba-hero-inner { display: grid; grid-template-columns: minmax(0, 1fr) 330px; gap: 28px; align-items: end; padding: 30px 28px 24px; }
+  .nba-eyebrow { margin: 0 0 10px; color: #bfe6ce; font-size: 12px; font-weight: 800; letter-spacing: .13em; text-transform: uppercase; }
+  .nba-hero-lead { max-width: 900px; margin: 0; color: #fff; font-size: clamp(24px, 3vw, 38px); font-weight: 850; line-height: 1.04; }
+  .nba-hero-copy { max-width: 860px; margin: 14px 0 0; color: #dcece2; font-size: 15px; }
+  .nba-status-panel { border: 1px solid rgba(255,255,255,.18); border-radius: 8px; background: rgba(255,255,255,.08); padding: 16px; }
+  .nba-status-panel strong { display: block; margin-bottom: 5px; color: #d7f1df; font-size: 12px; font-weight: 850; letter-spacing: .08em; text-transform: uppercase; }
+  .nba-status-panel p { margin: 0; color: #f2fff6; font-size: 13px; }
+  .nba-main { padding: 22px 28px 28px; }
+  .nba-kicker-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 12px; color: var(--muted); font-size: 12px; }
+  .nba-badge { display: inline-flex; align-items: center; min-height: 26px; padding: 0 10px; border: 1px solid #d7bd63; border-radius: 999px; background: var(--gold-100); color: var(--gold-700); font-size: 11px; font-weight: 850; letter-spacing: .06em; text-transform: uppercase; }
+  .nba-stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-bottom: 20px; }
+  .nba-stat { min-height: 132px; padding: 16px; border: 1px solid var(--line); border-radius: 8px; background: var(--paper); box-shadow: var(--shadow); }
+  .nba-stat-label { color: var(--muted); font-size: 12px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+  .nba-stat-value { margin: 10px 0 6px; color: var(--green-900); font-size: clamp(28px, 3vw, 43px); font-weight: 900; font-variant-numeric: tabular-nums; line-height: 1; }
+  .nba-stat-note { color: var(--body); font-size: 13px; }
+  .nba-section-head { display: flex; align-items: end; justify-content: space-between; gap: 16px; margin: 0 0 12px; }
+  .nba-section-head h2 { margin: 0; color: var(--ink); font-size: 22px; line-height: 1.12; }
+  .nba-section-head p { max-width: 760px; margin: 7px 0 0; color: var(--muted); font-size: 14px; }
+  .nba-decision-summary { margin-bottom: 20px; }
+  .nba-summary-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; }
+  .nba-summary-item { min-height: 154px; padding: 16px 18px; border-right: 1px solid var(--line); }
+  .nba-summary-item:last-child { border-right: 0; }
+  .nba-summary-label { margin: 0 0 8px; color: var(--muted); font-size: 11px; font-weight: 850; letter-spacing: .07em; text-transform: uppercase; }
+  .nba-summary-item p { margin: 0; color: var(--body); font-size: 13px; line-height: 1.5; }
+  .nba-summary-item strong { color: var(--green-900); }
+  .nba-grid { display: grid; grid-template-columns: minmax(300px, .9fr) minmax(0, 1.45fr); gap: 14px; align-items: start; }
+  .nba-grid > section { order: 2; }
+  .nba-grid > aside { order: 1; }
+  .nba-panel { overflow: hidden; border: 1px solid var(--line); border-radius: 8px; background: rgba(255,255,255,.96); box-shadow: var(--shadow); }
+  .nba-panel-header { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding: 17px 18px 13px; border-bottom: 1px solid var(--line); }
+  .nba-panel-heading { margin: 0; color: var(--ink); font-size: 16px; line-height: 1.1; }
+  .nba-panel-subtle { color: var(--muted); font-size: 12px; white-space: nowrap; }
+  .nba-legend { display: flex; flex-wrap: wrap; align-items: center; gap: 9px; margin: 12px 18px 0; padding: 9px 11px; border: 1px solid #cfe3d6; border-radius: 8px; background: var(--green-050); color: var(--body); font-size: 12px; }
+  .nba-legend-swatch { width: 34px; height: 8px; border-radius: 999px; background: var(--green-600); }
+  .nba-actions { padding: 8px 18px 16px; }
+  .nba-actions.is-superseded { display: none; }
+  .nba-recalc { margin: 12px 18px 18px; padding: 16px; border: 1px solid #d7bd63; border-radius: 8px; background: var(--gold-100); color: #70570e; font-size: 13px; line-height: 1.45; }
+  .nba-recalc strong { display: block; margin-bottom: 5px; color: var(--gold-700); }
+  .nba-action-row { display: grid; grid-template-columns: 152px minmax(72px, 1fr) 78px 52px; align-items: center; gap: 10px; min-height: 35px; border-bottom: 1px solid var(--line); font-size: 12px; }
+  .nba-action-row:last-child { border-bottom: 0; }
+  .nba-action-label { overflow: hidden; font-weight: 750; text-overflow: ellipsis; white-space: nowrap; }
+  .nba-track { height: 9px; overflow: hidden; border-radius: 999px; background: #e7ede9; }
+  .nba-fill { display: block; height: 100%; min-width: 3px; border-radius: inherit; background: var(--green-600); }
+  .nba-no-bar { color: var(--muted); font-size: 11px; font-style: italic; }
+  .nba-fill.urgent { background: var(--red-700); }
+  .nba-fill.reward { background: var(--blue-700); }
+  .nba-fill.rejoin { background: var(--blue-700); }
+  .nba-fill.neutral { background: #9aa8a1; }
+  .nba-num, .nba-pct { text-align: right; font-variant-numeric: tabular-nums; }
+  .nba-num { color: var(--green-900); font-weight: 900; }
+  .nba-pct { color: var(--muted); }
+  .nba-status { padding: 5px 18px 16px; }
+  .nba-status-item { padding: 13px 0; border-bottom: 1px solid var(--line); }
+  .nba-status-item:last-of-type { border-bottom: 0; }
+  .nba-status-label { color: var(--muted); font-size: 11px; font-weight: 850; letter-spacing: .07em; text-transform: uppercase; }
+  .nba-status-value { margin-top: 7px; color: var(--green-900); font-size: 17px; font-weight: 900; }
+  .nba-status-detail { margin-top: 6px; color: var(--body); font-size: 12px; line-height: 1.45; }
+  .nba-status-counts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin-top: 10px; }
+  .nba-status-count { padding: 8px; border: 1px solid var(--line); border-radius: 8px; background: var(--green-050); }
+  .nba-status-count strong { display: block; color: var(--green-900); font-size: 14px; font-variant-numeric: tabular-nums; }
+  .nba-status-count span { display: block; margin-top: 2px; color: var(--muted); font-size: 11px; text-transform: capitalize; }
+  .nba-alert { margin-top: 6px; padding: 12px; border-left: 3px solid var(--red-700); background: var(--red-100); color: #743326; font-size: 12px; line-height: 1.45; }
+  .nba-timing-channel { margin-top: 20px; }
+  .nba-division-gaps { margin-top: 20px; }
+  .nba-testing { margin-top: 20px; }
+  .nba-payload { margin-top: 20px; }
+  .nba-refresh-comparison { margin-top: 20px; }
+  .nba-braze-delivery { margin-top: 20px; }
+  .nba-daily-agent { margin-top: 20px; }
+  .nba-skill-summary { margin-top: 20px; }
+  .nba-flow { display: flex; align-items: stretch; gap: 8px; margin: 14px 18px 18px; overflow-x: auto; padding-bottom: 2px; }
+  .nba-flow-step { flex: 1 1 0; min-width: 150px; padding: 14px; border: 1px solid #cfe3d6; border-radius: 8px; background: var(--green-050); }
+  .nba-flow-step strong { display: block; margin-bottom: 5px; color: var(--green-900); font-size: 13px; }
+  .nba-flow-step span { display: block; color: var(--body); font-size: 11px; line-height: 1.4; }
+  .nba-flow-arrow { align-self: center; color: var(--green-700); font-size: 22px; font-weight: 900; }
+  .nba-timing-table-wrap { overflow-x: auto; }
+  .nba-timing-table { width: 100%; min-width: 920px; border-collapse: collapse; font-size: 12px; }
+  .nba-braze-table { min-width: 1180px; }
+  .nba-timing-table th, .nba-timing-table td { padding: 10px 12px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+  .nba-timing-table th { color: var(--green-900); background: var(--green-100); font-size: 11px; font-weight: 850; letter-spacing: .07em; text-transform: uppercase; }
+  .nba-timing-table tr:last-child td { border-bottom: 0; }
+  .nba-timing-table code { color: var(--green-900); font-weight: 850; white-space: nowrap; }
+  .nba-channel-note { margin: 0; padding: 12px 18px 16px; color: var(--body); font-size: 12px; line-height: 1.45; }
+  .nba-channel-note a { color: var(--green-900); font-weight: 800; }
+  .nba-code-sample { margin: 14px 18px; padding: 14px; overflow-x: auto; border: 1px solid #cfe3d6; border-radius: 8px; background: var(--green-050); color: var(--green-900); font-family: "Cascadia Mono", Consolas, monospace; font-size: 12px; line-height: 1.45; white-space: pre; }
+  .nba-payload-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(360px, .9fr); gap: 14px; align-items: start; padding: 0 18px 4px; }
+  .nba-payload-grid .nba-code-sample { margin: 14px 0; }
+  .nba-braze-screenshot { width: 100%; display: block; margin: 14px 0; border: 1px solid var(--line); border-radius: 8px; background: var(--field); box-shadow: var(--shadow); }
+  .nba-footer { margin-top: 16px; color: var(--muted); font-size: 12px; line-height: 1.45; }
+  @media (max-width: 900px) { .nba-hero-inner, .nba-grid, .nba-summary-grid { grid-template-columns: 1fr; } .nba-summary-item { min-height: 0; border-right: 0; border-bottom: 1px solid var(--line); } .nba-summary-item:last-child { border-bottom: 0; } }
+  @media (max-width: 760px) { .nba-dashboard { width: min(100% - 24px, 1440px); } .nba-hero-inner, .nba-main { padding-left: 16px; padding-right: 16px; } .nba-stats { grid-template-columns: 1fr; } .nba-section-head { display: block; } .nba-action-row { grid-template-columns: minmax(104px, 1fr) minmax(48px, 1fr) 66px 43px; gap: 7px; font-size: 11px; } .nba-actions { padding-left: 12px; padding-right: 12px; } .nba-legend { margin-left: 12px; margin-right: 12px; } }
+  @media (max-width: 900px) { .nba-payload-grid { grid-template-columns: 1fr; } }
+</style>
+
+<section class="nba-dashboard" aria-label="Next best action member analysis">
+  <div class="nba-canvas">
+    <header class="nba-hero">
+      <div class="nba-hero-inner">
+        <div>
+          <p class="nba-eyebrow">OnePass lifecycle decision brief</p>
+          <p class="nba-hero-lead">Next Best Action</p>
+    <p class="nba-hero-copy">Recommended next step to make the most of a current trial or paid OnePass membership.</p>
+        </div>
+        <aside class="nba-status-panel" aria-label="Analysis status">
+          <strong>Analysis status</strong>
+          <p>Dashboard last refreshed on 5 August 2026. GCP purchase affinity, canonical division-link state, and annual-plan signals are not fully included.</p>
+        </aside>
+      </div>
+    </header>
+
+    <main class="nba-main">
+      <div class="nba-kicker-row">
+        <span>NBA audience: 1,097,437 current trial or active paid members</span>
+        <span class="nba-badge">Last refreshed 5 August 2026</span>
+      </div>
+
+      <section aria-label="Headline measures">
+        <div class="nba-stats">
+          <article class="nba-stat"><div class="nba-stat-label">Active or trial members</div><div class="nba-stat-value">1,097,437</div><div class="nba-stat-note">Canonical current trial/paid reconciliation</div></article>
+          <article class="nba-stat"><div class="nba-stat-label">Non members</div><div class="nba-stat-value">1,967,607</div><div class="nba-stat-note">Account-only, cancelled, lapsed or otherwise non-current trial/paid</div></article>
+          <article class="nba-stat"><div class="nba-stat-label">Payment recovery</div><div class="nba-stat-value">2,299</div><div class="nba-stat-note">0.08% in current unrecovered grace</div></article>
+        </div>
+      </section>
+
+      <section class="nba-decision-summary" aria-labelledby="decision-summary-heading">
+        <div class="nba-panel">
+          <div class="nba-panel-header"><h2 class="nba-panel-heading" id="decision-summary-heading">Decision summary</h2><span class="nba-panel-subtle">Current-state member recommendation</span></div>
+          <div class="nba-summary-grid">
+            <article class="nba-summary-item">
+              <h3 class="nba-summary-label">Goal</h3>
+              <p><strong>Based on everything we know right now, what should we do next for this customer to maximise value for both the customer and the business?</strong> The model returns one current, actionable recommendation rather than a list of competing messages.</p>
+            </article>
+            <article class="nba-summary-item">
+              <h3 class="nba-summary-label">Audience And Status Paths</h3>
+          <p>Only current trial and active paid members are assessed. Paid members in current grace route to payment recovery; trial and active paid members progress through engagement actions; account-only, cancelled, lapsed and other non-current states are excluded; unclassified in-scope members return <code>NULL</code> for data-quality review.</p>
+            </article>
+            <article class="nba-summary-item">
+              <h3 class="nba-summary-label">How The Decision Is Made</h3>
+              <p>Urgency wins first: payment recovery, unredeemed rewards, then incomplete challenges. The remaining path checks Flybuys, division links, mobile app, push opt-in, and finally annual-plan eligibility for paid monthly high-engagement members. <code>na_complete</code> means every modelled action is complete or inapplicable.</p>
+            </article>
+          </div>
+          <div class="nba-timing-table-wrap">
+            <table class="nba-timing-table">
+              <thead><tr><th>Status path</th><th>Primary decision</th><th>Signals collected at decision time</th></tr></thead>
+              <tbody>
+                <tr><td>Paid in current grace</td><td><code>update_payment</code> until recovery or lapse, only within 15 days</td><td>Current subscription status; latest grace, recovery, lapse, and cancellation events</td></tr>
+            <tr><td>Current trial or active paid</td><td>Flybuys, a selected division link, app install, push opt-in, then annual plan where eligible</td><td>Current trial/paid subscription state; Flybuys and division state; app install; push opt-in; reward/challenge lifecycle; purchase value, frequency, and division affinity</td></tr>
+            <tr><td>All actions complete or insufficient in-scope state</td><td><code>na_complete</code> or <code>NULL</code></td><td>Verified completion/inapplicability for every modelled action, or a recorded data-quality gap</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="nba-channel-note"><strong>Caveats:</strong> the model uses only data available at the decision time and is a prioritisation tool, not proof that an action causes conversion. Mandatory service communications always take precedence. This displayed aggregate is AWS-only, so canonical GCP subscription, Flybuys, purchase-affinity, and annual-plan inputs still require the governed cross-environment refresh described below. The green-bar reference total is current active or trial members; do not treat it as a final GCP-enriched production audience.</p>
+        </div>
+      </section>
+
+      <section class="nba-grid" aria-label="Action distribution and subscription status">
+        <section class="nba-panel" aria-labelledby="action-heading">
+          <div class="nba-panel-header"><h2 class="nba-panel-heading" id="action-heading">Next-best-action distribution</h2><span class="nba-panel-subtle">Current trial and active paid members only</span></div>
+          <div class="nba-legend"><span class="nba-legend-swatch" aria-hidden="true"></span><span>Green bars use the 1,097,437 current trial-or-active-paid-member reference total. Account-only, cancelled, lapsed and other non-current states are excluded from the NBA calculation.</span></div>
+          <div class="nba-actions">
+            <div class="nba-action-row"><span class="nba-action-label">update_payment</span><span class="nba-track"><span class="nba-fill" style="width:.22%"></span></span><span class="nba-num">2,299</span><span class="nba-pct">0.22%</span></div>
+            <div class="nba-action-row"><span class="nba-action-label">link_flybuys</span><span class="nba-track"><span class="nba-fill" style="width:30.23%"></span></span><span class="nba-num">331,785</span><span class="nba-pct">30.23%</span></div>
+            <div class="nba-action-row"><span class="nba-action-label">link_bunnings</span><span class="nba-track"><span class="nba-fill" style="width:13.80%"></span></span><span class="nba-num">146,827</span><span class="nba-pct">13.80%</span></div>
+            <div class="nba-action-row"><span class="nba-action-label">link_kmart</span><span class="nba-track"><span class="nba-fill" style="width:2.60%"></span></span><span class="nba-num">27,658</span><span class="nba-pct">2.60%</span></div>
+            <div class="nba-action-row"><span class="nba-action-label">link_target</span><span class="nba-track"><span class="nba-fill" style="width:4.88%"></span></span><span class="nba-num">51,899</span><span class="nba-pct">4.88%</span></div>
+            <div class="nba-action-row"><span class="nba-action-label">link_officeworks</span><span class="nba-track"><span class="nba-fill" style="width:5.99%"></span></span><span class="nba-num">63,760</span><span class="nba-pct">5.99%</span></div>
+            <div class="nba-action-row"><span class="nba-action-label">link_priceline</span><span class="nba-track"><span class="nba-fill" style="width:29.77%"></span></span><span class="nba-num">316,791</span><span class="nba-pct">29.77%</span></div>
+            <div class="nba-action-row"><span class="nba-action-label">link_instantscripts</span><span class="nba-track"><span class="nba-fill" style="width:9.16%"></span></span><span class="nba-num">97,486</span><span class="nba-pct">9.16%</span></div>
+            <div class="nba-action-row"><span class="nba-action-label">download_app</span><span class="nba-track"><span class="nba-fill" style="width:2.04%"></span></span><span class="nba-num">21,653</span><span class="nba-pct">2.04%</span></div>
+            <div class="nba-action-row"><span class="nba-action-label">enable_push</span><span class="nba-track"><span class="nba-fill" style="width:3.13%"></span></span><span class="nba-num">33,254</span><span class="nba-pct">3.13%</span></div>
+            <div class="nba-action-row"><span class="nba-action-label">na_complete</span><span class="nba-no-bar">Terminal value</span><span class="nba-num">19,207</span><span class="nba-pct">No bar</span></div>
+          </div>
+        </section>
+
+        <aside class="nba-panel" aria-labelledby="status-heading">
+          <div class="nba-panel-header"><h2 class="nba-panel-heading" id="status-heading">Current subscription status</h2><span class="nba-panel-subtle">AWS member snapshot</span></div>
+          <div class="nba-status">
+            <div class="nba-status-item"><div class="nba-status-label">Current-state source</div><div class="nba-status-value">LATEST_SUBSCRIPTION_STATUS</div><div class="nba-status-detail">The member snapshot is deduplicated by its most recent <code>LAST_UPDATED_AT</code> value.</div></div>
+            <div class="nba-status-item"><div class="nba-status-label">Current status mix</div><div class="nba-status-counts"><div class="nba-status-count"><strong>936,135</strong><span>active (30.88%)</span></div><div class="nba-status-count"><strong>883,105</strong><span>cancelled (29.13%)</span></div><div class="nba-status-count"><strong>735,255</strong><span>unknown (24.25%)</span></div><div class="nba-status-count"><strong>311,939</strong><span>lapsed (10.29%)</span></div><div class="nba-status-count"><strong>127,862</strong><span>trial (4.22%)</span></div><div class="nba-status-count"><strong>2,362</strong><span>overdue (0.08%)</span></div></div><div class="nba-status-detail">Other current states: cancelling 20,084; cancelling trial 14,288; planchanged 574.</div></div>
+            <div class="nba-status-item"><div class="nba-status-label">Most urgent state</div><div class="nba-status-value">2,299 current grace cases</div><div class="nba-status-detail">Latest grace lifecycle event is a commencement within 15 days, with no later recovery, lapse, or cancellation event; current AWS status is overdue.</div></div>
+      <div class="nba-alert">The refreshed 15-day payment-recovery result is 2,299 members, aligning with the expected 2-3k current-grace population. Cancelled, lapsed and other non-current states are excluded from the NBA audience; the 19,207 fully completed in-scope members receive <code>na_complete</code>. These are rule-driven results, not capped audiences.</div>
+          </div>
+        </aside>
+      </section>
+
+      <section class="nba-division-gaps" aria-labelledby="division-gaps-heading">
+        <div class="nba-panel">
+          <div class="nba-panel-header"><h2 class="nba-panel-heading" id="division-gaps-heading">Current division linking gaps</h2><span class="nba-panel-subtle">Current trial and active paid members</span></div>
+          <div class="nba-timing-table-wrap">
+            <table class="nba-timing-table">
+              <thead><tr><th>Division</th><th>Members not linked</th><th>Current-state basis</th></tr></thead>
+              <tbody>
+                <tr><td>Bunnings</td><td><strong>299,613</strong></td><td>Member360 current linking date is null; GCP current-state source was not authorised in this session</td></tr>
+                <tr><td>Kmart</td><td><strong>175,634</strong></td><td>Member360 current linking date is null; GCP current-state source was not authorised in this session</td></tr>
+                <tr><td>Target</td><td><strong>301,702</strong></td><td>Member360 current linking date is null; GCP current-state source was not authorised in this session</td></tr>
+                <tr><td>Officeworks</td><td><strong>416,318</strong></td><td>Member360 current linking date is null; GCP current-state source was not authorised in this session</td></tr>
+                <tr><td>Catch</td><td><strong>4,690</strong></td><td>Latest explicit <code>catch_division_unlinked</code> event; no current fallback field available</td></tr>
+                <tr><td>Priceline</td><td><strong>3 explicit unlinked</strong></td><td>Latest explicit <code>priceline_division_unlinked</code> event; null means no linked or unlinked event and is not counted as unlinked</td></tr>
+                <tr><td>InstantScripts</td><td><strong>903,386</strong></td><td>Member360 current linking date is null; GCP current-state source was not authorised in this session</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="nba-channel-note"><strong>Important:</strong> these are fallback-source results for the current trial/paid audience of 1,097,437 members. Once GCP access is available, recalculate the five covered divisions with GCP taking precedence over AWS/Member360, as required by the division-linking skill.</p>
+        </div>
+      </section>
+
+      <section class="nba-skill-summary" aria-labelledby="skill-summary-heading">
+        <div class="nba-panel">
+          <div class="nba-panel-header"><h2 class="nba-panel-heading" id="skill-summary-heading">Next-best-action rules and conversions</h2><span class="nba-panel-subtle">One current action per member</span></div>
+          <div class="nba-timing-table-wrap">
+            <table class="nba-timing-table">
+              <thead><tr><th>Action returned</th><th>Completion signal</th><th>Decision rule</th><th>ACTION PRIORITY</th></tr></thead>
+              <tbody>
+                <tr><td><code>update_payment</code></td><td><code>subscription_grace_period_recovered</code></td><td>Current paid member in the latest unrecovered grace period, within 15 days</td><td>1 — Critical</td></tr>
+                <tr><td><code>redeem_reward</code> or <code>complete_challenge</code></td><td><code>dr_reward_redeemed</code> or <code>dr_challenge_completed</code></td><td>Issued, unredeemed reward or issued, incomplete challenge that has not expired</td><td>2 — Time-sensitive</td></tr>
+          <tr><td><code>link_flybuys</code></td><td><code>flybuys_linked</code></td><td>Current trial or active paid member missing a Flybuys link</td><td>3 — Highest scalable opportunity</td></tr>
+                <tr><td><code>link_bunnings</code> through <code>link_instantscripts</code></td><td>Matching division-linked event</td><td>Flybuys is linked but an eligible division is not; select highest purchase affinity, otherwise use the documented division order</td><td>4 — Rank by affinity</td></tr>
+                <tr><td><code>download_app</code>, then <code>enable_push</code></td><td>Recent app-install record, then recent push-opt-in record</td><td>No verified mobile app installation, then no push opt-in after installation</td><td>5 — Enable reach</td></tr>
+                <tr><td><code>plan_change_annual</code></td><td><code>subscription_plan_changed</code></td><td>Active paid monthly member with high engagement, after all higher actions are complete</td><td>6 — Retention/value</td></tr>
+          <tr><td><code>na_complete</code></td><td>Not applicable; terminal state</td><td>Every modelled action is complete or inapplicable</td><td>Terminal state</td></tr>
+          <tr><td><code>NULL</code></td><td>Resolve the data-quality gap before recommending an action</td><td>Current in-scope member state cannot be confidently classified</td><td>Data quality remediation</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="nba-channel-note">The skill uses only information available at decision time, returns one exact action value, and does not write to Braze. It never carries a historical grace case beyond the 15-day recovery window, and it does not recommend push before app installation.</p>
+        </div>
+      </section>
+
+      <section class="nba-timing-channel" aria-labelledby="timing-channel-heading">
+        <div class="nba-panel">
+          <div class="nba-panel-header"><h2 class="nba-panel-heading" id="timing-channel-heading">Timing and channel guidance</h2><span class="nba-panel-subtle">Operational defaults</span></div>
+          <div class="nba-timing-table-wrap">
+            <table class="nba-timing-table">
+              <thead><tr><th>Action</th><th>Recommend when</th><th>Timing cadence</th><th>Persist before advancing</th><th>Primary channel</th><th>Fallback</th></tr></thead>
+              <tbody>
+          <tr><td><code>update_payment</code></td><td>Grace commences with no later recovery</td><td>Immediately, then day 3, day 7, and before day 15</td><td>Do not advance during grace. Keep this action until recovery or lapse; remove the member from the current trial/paid NBA audience if the member lapses.</td><td>Push plus email</td><td>Email where push is unavailable</td></tr>
+                <tr><td><code>redeem_reward</code></td><td>Issued, unredeemed, and unexpired</td><td>At issue; repeat when seven days or fewer remain</td><td>Keep until redeemed or expired. Limit to three touches, with the final touch inside the last seven days.</td><td>Push plus in-app</td><td>Email near expiry</td></tr>
+                <tr><td><code>complete_challenge</code></td><td>Issued, incomplete, and unexpired</td><td>At issue, mid-window, and seven days before expiry</td><td>Keep until completed or expired. Limit to three touches, then advance after the expiry event.</td><td>Push plus in-app</td><td>Email near expiry</td></tr>
+                <tr><td><code>link_flybuys</code></td><td>Account or subscription starts without a current link</td><td>Day 0-7; escalate by day 14</td><td>Hold for 14 days or three touches. Then move to the next eligible action; reconsider after a relevant purchase or new subscription milestone.</td><td>In-app deep link plus push</td><td>Email where mobile is unavailable</td></tr>
+                <tr><td><code>link_bunnings</code> to <code>link_instantscripts</code></td><td>Brand is unlinked; use purchase affinity where available</td><td>Day 0-14 or after a relevant brand purchase</td><td>Hold the selected brand for 14 days or three touches. Then rotate to the next eligible brand or action; restart only after a relevant brand purchase.</td><td>In-app deep link plus push</td><td>Email with the selected brand benefit</td></tr>
+                <tr><td><code>download_app</code></td><td>No verified iOS or Android app session</td><td>Day 0-3 after account or subscription start</td><td>Hold for 14 days or three touches. Then move on; re-offer at a material lifecycle event or after 90 days.</td><td>Email or web surface</td><td>SMS only where separately approved</td></tr>
+                <tr><td><code>enable_push</code></td><td>Verified mobile session without push opt-in</td><td>At the next app session; retry after a value event</td><td>Use one permission prompt per 30 days. If declined or ignored, move on and retry only at a later high-value in-app moment.</td><td>In-app permission prompt</td><td>Email explaining notification value</td></tr>
+                <tr><td><code>plan_change_annual</code></td><td>Paid monthly and high engagement; requires GCP plan and purchase data</td><td>After 90 days engaged or 30 days before renewal</td><td>Hold for 30 days or three touches. Then suppress until the next renewal window or a 90-day requalification.</td><td>Email plus in-app</td><td>Push where opted in</td></tr>
+                <tr><td><code>na_complete</code></td><td>All currently modelled actions complete or inapplicable</td><td>No next-best-action campaign</td><td>Do not advance. Re-evaluate only when the member state, an expiry, a link, an app/push state, or subscription plan changes.</td><td>Suppress action messaging</td><td>Continue ordinary lifecycle communications</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="nba-channel-note">Use push first only for members with a verified mobile app session and push opt-in. These are capability-led channel defaults, not measured channel-lift results; validate them with controlled holdouts before treating them as best-channel evidence.</p>
+        </div>
+      </section>
+
+      <section class="nba-testing" aria-labelledby="testing-heading">
+        <div class="nba-panel">
+          <div class="nba-panel-header"><h2 class="nba-panel-heading" id="testing-heading">Testing framework</h2><span class="nba-panel-subtle">Measure incremental impact, not just response</span></div>
+          <div class="nba-timing-table-wrap">
+            <table class="nba-timing-table">
+              <thead><tr><th>Test component</th><th>Recommended design</th><th>What to measure</th><th>Decision rule</th></tr></thead>
+              <tbody>
+                <tr><td><strong>Eligibility and randomisation</strong></td><td>When a member first becomes eligible for an action, randomly and persistently assign them within that action and status to treatment or holdout. Stratify by subscription state, app/push capability, division, and member age so both groups are comparable.</td><td>Check that treatment and holdout have similar starting counts and profile mix before any message is sent.</td><td>Do not read results if allocation is materially imbalanced or if a member can cross between groups during the action window.</td></tr>
+                <tr><td><strong>Control experience</strong></td><td>Treatment receives the next-best-action message in the chosen channel and cadence. Holdout receives business-as-usual communications, but no targeted next-best-action prompt for that action.</td><td>Incremental conversion = treatment conversion rate minus holdout conversion rate in the same action window.</td><td>Keep the holdout clean: suppress overlapping campaigns that directly ask the member to complete the same action.</td></tr>
+                <tr><td><strong>Payment recovery exception</strong></td><td>For <code>update_payment</code>, compare the new NBA treatment against the current required payment/service communications, not against silence. Test channel, message, timing, and cadence while retaining mandatory notices for everyone.</td><td>Grace recovery within 15 days, lapse rate, and time to recovery.</td><td>Adopt only if recovery improves without increasing complaints, opt-outs, or unnecessary contact frequency.</td></tr>
+                <tr><td><strong>Primary action outcome</strong></td><td>Use the conversion event already defined for the recommended action: linked status/event, app install, push opt-in, reward redemption, challenge completion, annual plan change, rejoin, or grace recovery.</td><td>Conversion within the specified hold window: for example 14 days for linking, expiry for rewards/challenges, 15 days for payment recovery, and 30 days for rejoin.</td><td>Report the rate difference, relative lift, confidence interval, and number of incremental conversions, not treatment clicks alone.</td></tr>
+                <tr><td><strong>Business outcome</strong></td><td>Continue to observe both groups after the action window. Use the same follow-up horizon for treatment and holdout.</td><td>Trial start, paid start, paid retention, lapse/rejoin, purchase frequency, and value where the relevant source data is available.</td><td>Prioritise actions that create a meaningful positive downstream effect, even when their immediate click rate is lower.</td></tr>
+                <tr><td><strong>Guardrails</strong></td><td>Apply the contact caps in the timing guidance and record every exposure, channel, delivery, and conversion. Review by action, channel, and status.</td><td>Unsubscribe, push opt-out, spam complaint, bounce, complaint, support contact, fatigue, and conflicting-action rates.</td><td>Pause or reduce a treatment if guardrails worsen materially, even if the immediate conversion metric rises.</td></tr>
+                <tr><td><strong>Sample and duration</strong></td><td>Run until the action's conversion window has completed for enough members to produce a pre-agreed confidence interval. Use a 5-10% holdout for high-volume, lower-risk actions; use a larger split for smaller audiences or message tests.</td><td>Eligible members, exposed members, conversion rate, incremental conversions, and uncertainty by action.</td><td>Set the minimum detectable lift and stopping rule before launch. Do not stop early because the first few days look favourable.</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="nba-channel-note"><strong>Most credible proof:</strong> compare members who were equally eligible for the same action at the same time, where only the treatment group received the targeted NBA experience. A pre/post comparison alone is not sufficient because member mix, seasonality, and other campaigns change over time. Start with <code>link_flybuys</code>, the division links, and <code>download_app</code> because they have large eligible populations; analyse urgent payment recovery separately against its existing service journey.</p>
+        </div>
+      </section>
+
+      <section class="nba-refresh-comparison" aria-labelledby="refresh-comparison-heading">
+        <div class="nba-panel">
+          <div class="nba-panel-header"><h2 class="nba-panel-heading" id="refresh-comparison-heading">Refresh approach comparison</h2><span class="nba-panel-subtle">Recommended: hybrid</span></div>
+          <div class="nba-timing-table-wrap">
+            <table class="nba-timing-table">
+              <thead><tr><th>Approach</th><th>Build effort</th><th>Resources</th><th>Freshness and speed</th><th>Best use</th></tr></thead>
+              <tbody>
+                <tr><td>Event-driven delta refresh</td><td>High: event stream, state store, idempotency, monitoring</td><td>Low query cost per event; higher platform and operational support</td><td>Seconds to minutes after an event</td><td>Payment grace, reward and challenge expiry, lapse, recovery, and link changes</td></tr>
+                <tr><td>Daily full batch</td><td>Medium: scheduled query, output table, changed-value write</td><td>Medium warehouse compute; scales with all 3.03m members</td><td>Up to 24 hours stale. Current AWS-only aggregate query ran in about 2 minutes, excluding authentication and downstream writes.</td><td>Baseline for every member and late-arriving source updates</td></tr>
+                <tr><td>Weekly reconciliation</td><td>Low to medium: repeat the batch with data-quality checks</td><td>Medium compute, low operational complexity</td><td>Up to seven days to correct a late or missed change</td><td>Backstop for late events, source corrections, and counts validation</td></tr>
+                <tr><td>Monthly priority calibration</td><td>Medium to high: outcome analysis, holdouts, and rule review</td><td>Analyst and data-science time; no real-time serving requirement</td><td>Weeks; does not refresh a member's current value</td><td>Re-rank actions and validate timing or channel lift</td></tr>
+                <tr><td>Hybrid: event-driven plus daily batch</td><td>High initial build; lower ongoing risk</td><td>Medium total: targeted event compute plus one daily full run</td><td>Urgent changes in minutes; complete population refreshed daily</td><td>Recommended production design</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="nba-channel-note">Write the Braze attribute only when the value changes. This reduces downstream volume and makes the event-driven path practical while retaining a daily batch as the source-of-truth safety net.</p>
+        </div>
+      </section>
+
+      <section class="nba-braze-delivery" aria-labelledby="braze-delivery-heading">
+        <div class="nba-panel">
+          <div class="nba-panel-header"><h2 class="nba-panel-heading" id="braze-delivery-heading">Braze attribute delivery: MCP versus CSV import</h2><span class="nba-panel-subtle">Use deltas in either path</span></div>
+          <div class="nba-timing-table-wrap">
+            <table class="nba-timing-table nba-braze-table">
+              <thead><tr><th>Delivery path</th><th>Volume and throughput</th><th>Speed and freshness</th><th>Rate limits and ordering</th><th>Operational constraints</th><th>Recommended role</th></tr></thead>
+              <tbody>
+                <tr><td><strong>MCP-triggered Braze update</strong><br><span>Connector calling Braze user-profile APIs</span></td><td>Best for changed members. Standard <code>/users/track</code> requests support up to 75 combined attribute, event, and purchase objects. At the current 3.03m population that is at least 40,422 fully batched requests; one MCP call per member is not a viable full-population pattern.</td><td>Accepted updates can be sent in seconds to minutes for small deltas; Braze processes accepted API work asynchronously.</td><td>Braze limits are contract-specific. Data-point priced contracts document a 3,000-request / 3-second burst limit; that is a ceiling, not a delivery promise. API writes across requests are not ordered. Queue, throttle on 429, retry with the response headers, and send one member's complete change together.</td><td>Requires a confirmed write-capable MCP tool, a Braze key with <code>users.track</code>, batching, retries, idempotency, monitoring, and exact <code>external_id</code> matching. This Codex session has no confirmed Braze write tool, so it should not be assumed to support this path.</td><td>Urgent event-driven changes and a small daily changed-value set. Use only after connector capability, permissions, and change controls are approved.</td></tr>
+                <tr><td><strong>Codex CSV export then Braze import</strong><br><span>Controlled bulk file upload</span></td><td>Well suited to a first backfill or a full daily population file. Braze permits up to 500 MB for default or custom attribute CSVs; measure the final 3.03m-row file before upload and split it if required.</td><td>Export is typically minutes; Braze validates large files for up to two minutes and processing can take minutes to hours. It is not real-time.</td><td>No API request-rate queue to manage, but concurrent imports have no ordering guarantee. Import only a single authoritative file per run.</td><td>Manual upload and validation step; inspect the error report. Imports overwrite populated attribute values and consume data points. Files and error reports are retained by Braze for 14 days, so treat hashed IDs as controlled customer data and use an approved secure workspace.</td><td>Initial load, controlled backfill, and scheduled batch refresh while API/MCP write capability is being established.</td></tr>
+                <tr><td><strong>Recommended operating model</strong><br><span>CSV baseline, then MCP/API deltas</span></td><td>Load the current value once by CSV, then send only values that changed. This avoids repeatedly writing 3.03m identical attributes and reduces data-point, file, and API volume.</td><td>Baseline current within the batch window; high-priority grace, recovery, reward, challenge, linkage, and lapse changes can follow their source events.</td><td>Daily batch remains the source-of-truth reconciliation. Event writes need a durable outbox, per-member ordering, and a dead-letter/replay process.</td><td>Confirm whether the available MCP connector exposes a bulk endpoint. If it does not, use a scheduled integration against Braze's bulk/API capability rather than a Codex-driven per-user loop.</td><td>Best production path: one controlled CSV backfill, event-driven deltas for urgent changes, and a daily changed-value reconciliation.</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="nba-channel-note">Planning benchmark only: 3,031,604 members at 75 update objects per request equals at least 40,422 batched API requests. The documented burst ceiling would accept that many requests in about 41 seconds only in the most favourable contract scenario; it excludes connector overhead, retrying, Braze processing, and account-level limits. Check the account's API Usage Dashboard before sizing a job. Sources: <a href="https://www.braze.com/docs/api/endpoints/user_data/post_user_track" target="_blank" rel="noopener noreferrer">Braze user track API</a> and <a href="https://www.braze.com/docs/user_guide/audience/manage_audience/import_users/csv_import" target="_blank" rel="noopener noreferrer">Braze CSV import documentation</a>.</p>
+        </div>
+      </section>
+
+      <section class="nba-daily-agent" aria-labelledby="daily-agent-heading">
+        <div class="nba-panel">
+          <div class="nba-panel-header"><h2 class="nba-panel-heading" id="daily-agent-heading">Daily-agent capability</h2><span class="nba-panel-subtle">Delta calculation and delivery readiness</span></div>
+          <div class="nba-flow" aria-label="Daily next-best-action operating flow">
+            <div class="nba-flow-step"><strong>1. Refresh sources</strong><span>Read AWS event features and scheduled GCP subscription, Flybuys and purchase inputs.</span></div>
+            <div class="nba-flow-arrow" aria-hidden="true">→</div>
+            <div class="nba-flow-step"><strong>2. Calculate NBA</strong><span>Apply the decision rules to produce one current recommended action per member.</span></div>
+            <div class="nba-flow-arrow" aria-hidden="true">→</div>
+            <div class="nba-flow-step"><strong>3. Compare values</strong><span>Compare the current action with the last successfully delivered value.</span></div>
+            <div class="nba-flow-arrow" aria-hidden="true">→</div>
+            <div class="nba-flow-step"><strong>4. Deliver changes</strong><span>Send only new or changed values through the reviewed CSV or governed API/MCP path.</span></div>
+            <div class="nba-flow-arrow" aria-hidden="true">→</div>
+            <div class="nba-flow-step"><strong>5. Audit and reconcile</strong><span>Record delivery status, exceptions and conversions, then reconcile in the daily batch.</span></div>
+          </div>
+          <div class="nba-timing-table-wrap">
+            <table class="nba-timing-table">
+              <thead><tr><th>Capability</th><th>What the agent would do</th><th>Current constraint</th><th>Safe operating model</th></tr></thead>
+              <tbody>
+                <tr><td><strong>Calculate deltas</strong></td><td>Run the NBA feature refresh, compare the current value with the last successfully delivered value, then classify each member as <code>new</code>, <code>changed</code>, or <code>unchanged</code>.</td><td>Requires a governed delivery-state table containing the hashed/external ID, last published action, conversion event, run timestamp, and delivery status.</td><td>Only send <code>new</code> and <code>changed</code> rows. Update delivery state only after the export or Braze write has completed successfully.</td></tr>
+                <tr><td><strong>Daily Codex task</strong></td><td>A standalone scheduled task can execute the skills, create the delta/audit output, report counts and exceptions, and notify the operating team.</td><td>For local-project work, the desktop app and computer must remain running. Scheduled tasks run unattended with the configured sandbox permissions.</td><td>Start with a daily independent run and review the first outputs. Keep durable instructions in the skill and scheduled-task prompt. See <a href="https://learn.chatgpt.com/docs/automations.md" target="_blank" rel="noopener noreferrer">Codex scheduled tasks</a>.</td></tr>
+                <tr><td><strong>CSV delivery</strong></td><td>Write a delta-only CSV containing <code>external_id</code> and <code>next_best_action</code>, plus a separate audit report with old/new values and run ID.</td><td>The file can be created automatically, but the normal Braze CSV import is a manual review and upload control point.</td><td>Recommended first production step: reviewed daily delta CSV, import validation, then mark accepted rows as delivered.</td></tr>
+                <tr><td><strong>MCP/API delivery</strong></td><td>Batch changed attributes, throttle and retry failures, keep per-member ordering, and record accepted/rejected rows in an outbox.</td><td>This Codex session has no confirmed write-capable Braze MCP tool. Direct delivery also requires a controlled <code>users.track</code> credential and account-specific rate-limit handling.</td><td>Use only after connector capability, service ownership, permissions, monitoring, and replay/dead-letter controls are approved.</td></tr>
+                <tr><td><strong>Snowflake authentication</strong></td><td>Read the AWS and GCP source features needed for the calculation.</td><td>The current connections use <code>externalbrowser</code> SSO. Cached sessions expire, so this is not reliable for an unattended daily process.</td><td>Obtain an approved non-interactive service authentication method before relying on a daily unattended agent.</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="nba-channel-note"><strong>Recommended progression:</strong> daily calculation and reviewed delta CSV first; then a governed automated API/MCP delta writer; finally, move high-volume production execution into an owned data-orchestration service while Codex remains responsible for rules, audit, monitoring, and analytical calibration.</p>
+        </div>
+      </section>
+
+      <section class="nba-payload" aria-labelledby="payload-heading">
+        <div class="nba-panel">
+          <div class="nba-panel-header"><h2 class="nba-panel-heading" id="payload-heading">Braze attribute payload</h2><span class="nba-panel-subtle">API/MCP and CSV examples</span></div>
+          <p class="nba-channel-note">This API/MCP example uses <code>next_best_action</code> as an object-array attribute containing the action name, conversion event, and timing. This example intentionally omits <code>_update_existing_only</code>.</p>
+          <div class="nba-payload-grid">
+          <pre class="nba-code-sample" aria-label="Braze API payload example">{
+  "attributes": [
+    {
+      "external_id": "{{${user_id}}}",
+      "next_best_action": [
+        {
+          "name": "link_flybuys",
+          "conversion_event": "flybuys_linked",
+          "updated_at": {
+            "$time": "2026-08-04T04:37:33Z"
+          },
+          "hold_until": {
+            "$time": "2026-08-17T23:00:00Z"
+          }
+        }
+      ]
+    }
+  ]
+}</pre>
+            <div>
+              <img class="nba-braze-screenshot" src="braze-next-best-action-payload.jpeg" alt="Braze next_best_action attribute showing link_flybuys, flybuys_linked, updated_at and hold_until values">
+            </div>
+          </div>
+          <p class="nba-channel-note">CSV delivery cannot write this nested object-array structure; use a separate flat attribute or an API/MCP or Cloud Data Ingestion path for this model. Without <code>_update_existing_only</code>, an unknown <code>external_id</code> can create a Braze profile, so validate the delta audience before delivery.</p>
+        </div>
+      </section>
+
+      <section class="nba-braze-delivery" aria-labelledby="braze-numbers-heading">
+        <div class="nba-panel">
+          <div class="nba-panel-header"><h2 class="nba-panel-heading" id="braze-numbers-heading">Codex vs Braze numbers</h2><span class="nba-panel-subtle">Comparison as of 5 August 2026</span></div>
+          <div class="nba-timing-table-wrap">
+            <table class="nba-timing-table">
+              <thead><tr><th>Value</th><th>Braze</th><th>Codex</th><th>% difference</th></tr></thead>
+              <tbody>
+                <tr><td><code>flybuys_linked</code></td><td>347,488</td><td>331,785</td><td>-4.52%</td></tr>
+                <tr><td><code>overdue</code></td><td>2,463</td><td>2,362</td><td>-4.10%</td></tr>
+                <tr><td><code>div-bunnings</code></td><td>330,865</td><td>299,613</td><td>-9.45%</td></tr>
+                <tr><td><code>div-kmart</code></td><td>194,386</td><td>175,634</td><td>-9.65%</td></tr>
+                <tr><td><code>div-target</code></td><td>321,152</td><td>301,702</td><td>-6.06%</td></tr>
+                <tr><td><code>div-officeworks</code></td><td>434,107</td><td>416,318</td><td>-4.10%</td></tr>
+                <tr><td><code>div-priceline</code></td><td>827,087</td><td>860,578</td><td>4.05%</td></tr>
+                <tr><td><code>div-instantscripts</code></td><td>1,120,868</td><td>903,386</td><td>-19.40%</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="nba-channel-note"><strong>Source:</strong> <code>Codex v Braze numbers.xlsx</code>, supplied for comparison. Percentage difference is provided as recorded in the workbook.</p>
+        </div>
+      </section>
+
+      <section class="nba-braze-delivery" aria-labelledby="source-topology-heading">
+        <div class="nba-panel">
+          <div class="nba-panel-header"><h2 class="nba-panel-heading" id="source-topology-heading">Data-source topology and skills reference</h2><span class="nba-panel-subtle">AWS and GCP inputs</span></div>
+          <div class="nba-timing-table-wrap">
+            <table class="nba-timing-table">
+              <thead><tr><th>Source system</th><th>Tables used for next best action</th><th>Feature supplied</th><th>Refresh-speed implication</th></tr></thead>
+              <tbody>
+                <tr><td><strong>OnePass / AWS / Wesdigital</strong></td><td><code>MARKETING_PROD.SHARED_BRAZE.USERS_BEHAVIORS_CUSTOMEVENT_SHARED</code><br><code>MARKETING_PROD.SHARED_BRAZE.USERS_BEHAVIORS_APP_FIRSTSESSION_SHARED</code><br><code>MEMBER360_BETA_PROD.MODELS.MEMBER_DETAILS</code> and <code>PERSON_IDENTITY_LOOKUP</code> as fallback</td><td>Grace, reward, challenge, division-link and plan events; app-install history; AWS fallback member state and hashed identity.</td><td>The current 3.03m-member AWS-only aggregate ran in about two minutes, excluding sign-in and any downstream write. It is fast because it stays inside one account, but it does not include the GCP purchase, canonical Flybuys, or preferred subscription sources.</td></tr>
+                <tr><td><strong>OneData / GCP / Wesfarmers</strong></td><td><code>OND_PROD.LOYALTY.ONEDATA_SUBSCRIPTION_HISTORY_PRODUCT</code><br><code>OND_PROD.LOYALTY.R_ONP_FLYBUYS_LINKAGE</code><br><code>OND_PROD.CONSUMPTION.F_ALL_TRANSACTION_ORDER</code></td><td>Preferred subscription history/current state; current Flybuys linkage; purchase value, frequency, and division affinity for annual-plan and division ranking.</td><td>A full decision requires separate GCP reads, identity-safe reconciliation, and then a governed combination with AWS event features. This adds query, transfer/coordination, and data-quality time; it cannot be treated as one native cross-account join from the current CLI sessions.</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="nba-channel-note"><strong>Speed consequence:</strong> use AWS event-driven deltas for grace, reward, challenge, app, push, and division-event changes. Refresh GCP subscription, Flybuys, and purchase features on a scheduled cadence, then reconcile in an approved shared/curated feature layer. The complete production target is a materialised member-feature table, so the decision job reads one prepared dataset rather than repeatedly joining data across AWS and GCP. The current dashboard remains AWS-only, so it is a fast directional baseline rather than the final cross-environment production refresh.</p>
+          <p class="nba-channel-note"><strong>Skills used:</strong> <code>next-best-action</code> (orchestration); <code>subscription-status-custom-events</code>; <code>challenge-reward-issued</code>; <code>flybuys-linked-status</code>; <code>divisions-linked</code>; <code>first-app-install</code>; <code>push-optin-date</code>; and <code>purchase-history</code>.</p>
+        </div>
+      </section>
+
+<footer class="nba-footer">Scope: 1,097,437 current trial or active paid members only. Account-only, cancelled, lapsed and other non-current states are excluded from all next-best-action calculations. Flybuys linkage uses current SCD status from <code>OND_PROD.LOYALTY.R_ONP_FLYBUYS_LINKAGE</code>; no AWS Braze custom-event source is used for that calculation.</footer>
+    </main>
+  </div>
+</section>
