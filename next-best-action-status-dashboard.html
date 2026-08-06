@@ -1,46 +1,46 @@
 <style>
   .nba-dashboard {
-    --green-900: #073f33;
-    --green-700: #008540;
-    --green-600: #2f9d62;
-    --green-100: #e8f3eb;
-    --green-050: #f4faf6;
-    --ink: #202524;
-    --body: #3f4845;
-    --muted: #697470;
-    --line: #dbe3df;
+    --green-900: #4e0a86;
+    --green-700: #7b00e8;
+    --green-600: #7b00e8;
+    --green-100: #f1e6ff;
+    --green-050: #faf7ff;
+    --ink: #231934;
+    --body: #4f465b;
+    --muted: #756d82;
+    --line: #e8e1ef;
     --paper: #fff;
-    --field: #f2f5f2;
+    --field: #fbf9fd;
     --blue-700: #095d7d;
     --blue-100: #e4f1f6;
     --gold-700: #9a7a18;
     --gold-100: #f7efd2;
     --red-700: #a83b2d;
     --red-100: #fbe7e3;
-    --shadow: 0 8px 28px rgba(19, 42, 36, .08);
+    --shadow: 0 5px 18px rgba(54,25,79,.04);
     width: min(1440px, calc(100vw - 36px));
     margin: 0 auto;
     color: var(--ink);
-    font-family: "Aptos", "Segoe UI", sans-serif;
+    font-family: Arial, Helvetica, sans-serif;
     line-height: 1.42;
   }
   .nba-dashboard *, .nba-dashboard *::before, .nba-dashboard *::after { box-sizing: border-box; }
-  .nba-canvas { overflow: hidden; border: 1px solid var(--line); border-radius: 8px; background: linear-gradient(90deg, rgba(0,133,64,.08) 1px, transparent 1px), linear-gradient(0deg, rgba(0,133,64,.07) 1px, transparent 1px), var(--field); background-size: 44px 44px; }
-  .nba-hero { color: #fff; background: linear-gradient(135deg, rgba(0,175,104,.22), transparent 48%), var(--green-900); border-bottom: 6px solid var(--green-700); box-shadow: 0 18px 60px rgba(11,40,34,.12); }
-  .nba-hero-inner { display: grid; grid-template-columns: minmax(0, 1fr) 330px; gap: 28px; align-items: end; padding: 30px 28px 24px; }
+  .nba-canvas { overflow: hidden; border: 1px solid var(--line); border-radius: 22px; background: var(--field); }
+  .nba-hero { color: #fff; background: linear-gradient(112deg, var(--green-900), var(--green-700)); border-bottom: 0; box-shadow: none; }
+  .nba-hero-inner { display: grid; grid-template-columns: minmax(0, 1fr) 330px; gap: 28px; align-items: end; padding: 36px 40px; }
   .nba-eyebrow { margin: 0 0 10px; color: #bfe6ce; font-size: 12px; font-weight: 800; letter-spacing: .13em; text-transform: uppercase; }
-  .nba-hero-lead { max-width: 900px; margin: 0; color: #fff; font-size: clamp(24px, 3vw, 38px); font-weight: 850; line-height: 1.04; }
+  .nba-hero-lead { max-width: 900px; margin: 0; color: #fff; font-size: clamp(34px, 4vw, 42px); font-weight: 800; letter-spacing: -1.5px; line-height: 1.05; }
   .nba-hero-copy { max-width: 860px; margin: 14px 0 0; color: #dcece2; font-size: 15px; }
-  .nba-status-panel { border: 1px solid rgba(255,255,255,.18); border-radius: 8px; background: rgba(255,255,255,.08); padding: 16px; }
+  .nba-status-panel { border: 1px solid rgba(255,255,255,.35); border-radius: 14px; background: rgba(255,255,255,.1); padding: 16px; }
   .nba-status-panel strong { display: block; margin-bottom: 5px; color: #d7f1df; font-size: 12px; font-weight: 850; letter-spacing: .08em; text-transform: uppercase; }
   .nba-status-panel p { margin: 0; color: #f2fff6; font-size: 13px; }
-  .nba-main { padding: 22px 28px 28px; }
+  .nba-main { padding: 28px 40px 40px; }
   .nba-kicker-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 12px; color: var(--muted); font-size: 12px; }
   .nba-badge { display: inline-flex; align-items: center; min-height: 26px; padding: 0 10px; border: 1px solid #d7bd63; border-radius: 999px; background: var(--gold-100); color: var(--gold-700); font-size: 11px; font-weight: 850; letter-spacing: .06em; text-transform: uppercase; }
-  .nba-stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-bottom: 20px; }
-  .nba-stat { min-height: 132px; padding: 16px; border: 1px solid var(--line); border-radius: 8px; background: var(--paper); box-shadow: var(--shadow); }
+  .nba-stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin-bottom: 22px; }
+  .nba-stat { min-height: 132px; padding: 20px; border: 1px solid var(--line); border-radius: 16px; background: var(--paper); box-shadow: var(--shadow); }
   .nba-stat-label { color: var(--muted); font-size: 12px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
-  .nba-stat-value { margin: 10px 0 6px; color: var(--green-900); font-size: clamp(28px, 3vw, 43px); font-weight: 900; font-variant-numeric: tabular-nums; line-height: 1; }
+  .nba-stat-value { margin: 10px 0 6px; color: var(--green-900); font-size: clamp(28px, 3vw, 43px); font-weight: 800; font-variant-numeric: tabular-nums; line-height: 1; }
   .nba-stat-note { color: var(--body); font-size: 13px; }
   .nba-section-head { display: flex; align-items: end; justify-content: space-between; gap: 16px; margin: 0 0 12px; }
   .nba-section-head h2 { margin: 0; color: var(--ink); font-size: 22px; line-height: 1.12; }
@@ -55,7 +55,7 @@
   .nba-grid { display: grid; grid-template-columns: minmax(300px, .9fr) minmax(0, 1.45fr); gap: 14px; align-items: start; }
   .nba-grid > section { order: 2; }
   .nba-grid > aside { order: 1; }
-  .nba-panel { overflow: hidden; border: 1px solid var(--line); border-radius: 8px; background: rgba(255,255,255,.96); box-shadow: var(--shadow); }
+  .nba-panel { overflow: hidden; border: 1px solid var(--line); border-radius: 16px; background: rgba(255,255,255,.98); box-shadow: var(--shadow); }
   .nba-panel-header { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding: 17px 18px 13px; border-bottom: 1px solid var(--line); }
   .nba-panel-heading { margin: 0; color: var(--ink); font-size: 16px; line-height: 1.1; }
   .nba-panel-subtle { color: var(--muted); font-size: 12px; white-space: nowrap; }
@@ -106,7 +106,7 @@
   .nba-timing-table { width: 100%; min-width: 920px; border-collapse: collapse; font-size: 12px; }
   .nba-braze-table { min-width: 1180px; }
   .nba-timing-table th, .nba-timing-table td { padding: 10px 12px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
-  .nba-timing-table th { color: var(--green-900); background: var(--green-100); font-size: 11px; font-weight: 850; letter-spacing: .07em; text-transform: uppercase; }
+  .nba-timing-table th { color: var(--green-900); background: var(--green-100); font-size: 11px; font-weight: 800; letter-spacing: .07em; text-transform: uppercase; }
   .nba-timing-table tr:last-child td { border-bottom: 0; }
   .nba-timing-table code { color: var(--green-900); font-weight: 850; white-space: nowrap; }
   .nba-channel-note { margin: 0; padding: 12px 18px 16px; color: var(--body); font-size: 12px; line-height: 1.45; }
@@ -117,7 +117,8 @@
   .nba-braze-screenshot { width: 100%; display: block; margin: 14px 0; border: 1px solid var(--line); border-radius: 8px; background: var(--field); box-shadow: var(--shadow); }
   .nba-footer { margin-top: 16px; color: var(--muted); font-size: 12px; line-height: 1.45; }
   @media (max-width: 900px) { .nba-hero-inner, .nba-grid, .nba-summary-grid { grid-template-columns: 1fr; } .nba-summary-item { min-height: 0; border-right: 0; border-bottom: 1px solid var(--line); } .nba-summary-item:last-child { border-bottom: 0; } }
-  @media (max-width: 760px) { .nba-dashboard { width: min(100% - 24px, 1440px); } .nba-hero-inner, .nba-main { padding-left: 16px; padding-right: 16px; } .nba-stats { grid-template-columns: 1fr; } .nba-section-head { display: block; } .nba-action-row { grid-template-columns: minmax(104px, 1fr) minmax(48px, 1fr) 66px 43px; gap: 7px; font-size: 11px; } .nba-actions { padding-left: 12px; padding-right: 12px; } .nba-legend { margin-left: 12px; margin-right: 12px; } }
+  @media (max-width: 760px) { .nba-dashboard { width: min(100% - 24px, 1440px); } .nba-hero-inner, .nba-main { padding-left: 24px; padding-right: 24px; } .nba-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); } .nba-section-head { display: block; } .nba-action-row { grid-template-columns: minmax(104px, 1fr) minmax(48px, 1fr) 66px 43px; gap: 7px; font-size: 11px; } .nba-actions { padding-left: 12px; padding-right: 12px; } .nba-legend { margin-left: 12px; margin-right: 12px; } }
+  @media (max-width: 560px) { .nba-hero-inner, .nba-main { padding-left: 16px; padding-right: 16px; } .nba-stats { grid-template-columns: 1fr; } }
   @media (max-width: 900px) { .nba-payload-grid { grid-template-columns: 1fr; } }
 </style>
 
