@@ -213,27 +213,6 @@
         </aside>
       </section>
 
-      <section class="nba-division-gaps" aria-labelledby="division-gaps-heading">
-        <div class="nba-panel">
-          <div class="nba-panel-header"><h2 class="nba-panel-heading" id="division-gaps-heading">Current division linking gaps</h2><span class="nba-panel-subtle">Current trial and active paid members</span></div>
-          <div class="nba-timing-table-wrap">
-            <table class="nba-timing-table">
-              <thead><tr><th>Division</th><th>Members not linked</th><th>Current-state basis</th></tr></thead>
-              <tbody>
-                <tr><td>Bunnings</td><td><strong>299,613</strong></td><td>Member360 current linking date is null; GCP current-state source was not authorised in this session</td></tr>
-                <tr><td>Kmart</td><td><strong>175,634</strong></td><td>Member360 current linking date is null; GCP current-state source was not authorised in this session</td></tr>
-                <tr><td>Target</td><td><strong>301,702</strong></td><td>Member360 current linking date is null; GCP current-state source was not authorised in this session</td></tr>
-                <tr><td>Officeworks</td><td><strong>416,318</strong></td><td>Member360 current linking date is null; GCP current-state source was not authorised in this session</td></tr>
-                <tr><td>Catch</td><td><strong>4,690</strong></td><td>Latest explicit <code>catch_division_unlinked</code> event; no current fallback field available</td></tr>
-                <tr><td>Priceline</td><td><strong>3 explicit unlinked</strong></td><td>Latest explicit <code>priceline_division_unlinked</code> event; null means no linked or unlinked event and is not counted as unlinked</td></tr>
-                <tr><td>InstantScripts</td><td><strong>903,386</strong></td><td>Member360 current linking date is null; GCP current-state source was not authorised in this session</td></tr>
-              </tbody>
-            </table>
-          </div>
-          <p class="nba-channel-note"><strong>Important:</strong> these are fallback-source results for the current trial/paid audience of 1,097,437 members. Once GCP access is available, recalculate the five covered divisions with GCP taking precedence over AWS/Member360, as required by the division-linking skill.</p>
-        </div>
-      </section>
-
       <section class="nba-skill-summary" aria-labelledby="skill-summary-heading">
         <div class="nba-panel">
           <div class="nba-panel-header"><h2 class="nba-panel-heading" id="skill-summary-heading">Next-best-action rules and conversions</h2><span class="nba-panel-subtle">One current action per member</span></div>
@@ -418,7 +397,7 @@
 
       <section class="nba-braze-delivery" aria-labelledby="braze-numbers-heading">
         <div class="nba-panel">
-          <div class="nba-panel-header"><h2 class="nba-panel-heading" id="braze-numbers-heading">Codex vs Braze numbers</h2><span class="nba-panel-subtle">Comparison as of 5 August 2026</span></div>
+          <div class="nba-panel-header"><h2 class="nba-panel-heading" id="braze-numbers-heading">Current linking gaps</h2><span class="nba-panel-subtle">Comparison as of 5 August 2026</span></div>
           <div class="nba-timing-table-wrap">
             <table class="nba-timing-table">
               <thead><tr><th>Value</th><th>Braze</th><th>Codex</th><th>% difference</th></tr></thead>
