@@ -90,6 +90,7 @@
   .nba-status-count span { display: block; margin-top: 2px; color: var(--muted); font-size: 11px; text-transform: capitalize; }
   .nba-alert { margin-top: 6px; padding: 12px; border-left: 3px solid var(--red-700); background: var(--red-100); color: #743326; font-size: 12px; line-height: 1.45; }
   .nba-timing-channel { margin-top: 20px; }
+  .nba-status-routing { margin-top: 20px; }
   .nba-division-gaps { margin-top: 20px; }
   .nba-testing { margin-top: 20px; }
   .nba-payload { margin-top: 20px; }
@@ -255,6 +256,43 @@
             </table>
           </div>
           <p class="nba-channel-note">Use push first only for members with a verified mobile app session and push opt-in. These are capability-led channel defaults, not measured channel-lift results; validate them with controlled holdouts before treating them as best-channel evidence.</p>
+        </div>
+      </section>
+
+      <section class="nba-status-routing" aria-labelledby="status-routing-heading">
+        <div class="nba-panel">
+          <div class="nba-panel-header"><h2 class="nba-panel-heading" id="status-routing-heading">Next best action by status</h2><span class="nba-panel-subtle">First eligible action is selected</span></div>
+          <div class="nba-timing-table-wrap">
+            <table class="nba-timing-table">
+              <thead><tr><th>Status group</th><th>Goal</th><th>Action order</th><th>Key eligibility notes</th></tr></thead>
+              <tbody>
+                <tr><td><strong>Account created</strong><br>No trial or paid history</td><td>Start trial or paid membership</td><td><strong>Start trial or paid membership</strong> → if eligible, <code>link_flybuys</code> → one missing division → <code>download_app</code> → <code>enable_push</code> → <code>na_complete</code></td><td>Starting trial or paid membership is the priority lifecycle action. It is not currently stored as a permitted NBA attribute value; <code>enable_push</code> requires an app-install record.</td></tr>
+                <tr><td><strong>Active trial</strong></td><td>Start paid membership</td><td><code>redeem_reward</code> / <code>complete_challenge</code> if eligible → <code>link_flybuys</code> → one missing division → <code>download_app</code> → <code>enable_push</code> → <code>na_complete</code></td><td><code>plan_change_annual</code> is not eligible before paid membership.</td></tr>
+                <tr><td><strong>Active paid</strong></td><td>Retain membership and increase value</td><td><code>update_payment</code> if in grace → <code>redeem_reward</code> → <code>complete_challenge</code> → <code>link_flybuys</code> → one missing division → <code>download_app</code> → <code>enable_push</code> → <code>plan_change_annual</code> → <code>na_complete</code></td><td>Annual-plan action requires a paid monthly, high-engagement member and follows all higher-priority actions.</td></tr>
+                <tr><td><strong>Paid overdue / grace</strong></td><td>Recover payment</td><td><code>update_payment</code> first; after recovery, return to the active-paid order</td><td>Only eligible within the verified 15-day grace window, with no later recovery, lapse, or cancellation.</td></tr>
+                <tr><td><strong>Cancelled or lapsed</strong></td><td>Reactivate membership</td><td><code>rejoin_onepass</code> only</td><td>Other actions are not evaluated on this route.</td></tr>
+                <tr><td><strong>Unclassified</strong></td><td>Resolve data quality</td><td><code>NULL</code></td><td>Use only when the current subscription state cannot be reliably classified.</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="nba-channel-note">Urgent payment, reward, and challenge actions can override the normal lifecycle order when their eligibility conditions are verified.</p>
+        </div>
+
+        <div class="nba-panel" style="margin-top:20px">
+          <div class="nba-panel-header"><h2 class="nba-panel-heading">How the next division to link is selected</h2><span class="nba-panel-subtle">Same division logic for account-only, trial, and paid</span></div>
+          <div class="nba-timing-table-wrap">
+            <table class="nba-timing-table">
+              <thead><tr><th>Step</th><th>Logic</th><th>Result</th></tr></thead>
+              <tbody>
+                <tr><td><strong>1. Resolve current state</strong></td><td>Use GCP current-state linking data first. If unavailable, use the latest brand-specific link or unlink event; use Member360 only as a fallback where applicable.</td><td>A later unlink makes the division eligible again. Historical linking alone does not permanently exclude it.</td></tr>
+                <tr><td><strong>2. Find candidates</strong></td><td>Keep only divisions that are not currently linked: Bunnings, Kmart, Target, Officeworks, Priceline, and InstantScripts.</td><td>The action remains one missing division at a time.</td></tr>
+                <tr><td><strong>3. Rank by relevance</strong></td><td>Use the highest last-90-day retail transaction count; use net retail spend as the tie-breaker.</td><td>The most relevant missing division becomes the next division action.</td></tr>
+                <tr><td><strong>4. Use fallback order</strong></td><td>When purchase data is unavailable, use Bunnings → Kmart → Target → Officeworks → Priceline → InstantScripts.</td><td>Map the selected division to its exact action value, such as <code>link_bunnings</code>.</td></tr>
+                <tr><td><strong>5. Apply guardrails</strong></td><td><code>link_instantscripts</code> is only selected early when Priceline is the highest-transaction division, or when every other permitted division is already linked. Priceline uses its latest Braze linking event.</td><td>Prevents InstantScripts being recommended ahead of a more relevant missing division.</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="nba-channel-note">The division-selection logic is consistent across account-only, trial, and paid routes. Subscription state determines whether the division stage is reached and which higher-priority actions can override it.</p>
         </div>
       </section>
 
