@@ -134,22 +134,22 @@
         </div>
         <aside class="nba-status-panel" aria-label="Analysis status">
           <strong>Analysis status</strong>
-          <p>Dashboard last refreshed on 5 August 2026. GCP purchase affinity, canonical division-link state, and annual-plan signals are not fully included.</p>
+          <p>Dashboard last refreshed on 11 August 2026. GCP subscription and Flybuys state were refreshed today; purchase affinity, canonical division-link state, and annual-plan signals are not fully included.</p>
         </aside>
       </div>
     </header>
 
     <main class="nba-main">
       <div class="nba-kicker-row">
-        <span>NBA audience: 1,097,437 current trial or active paid members</span>
-        <span class="nba-badge">Last refreshed 5 August 2026</span>
+        <span>NBA audience: 1,106,137 current trial or active paid members</span>
+        <span class="nba-badge">Last refreshed 11 August 2026</span>
       </div>
 
       <section aria-label="Headline measures">
         <div class="nba-stats">
-          <article class="nba-stat"><div class="nba-stat-label">Active or trial members</div><div class="nba-stat-value">1,097,437</div><div class="nba-stat-note">Canonical current trial/paid reconciliation</div></article>
-          <article class="nba-stat"><div class="nba-stat-label">Non members</div><div class="nba-stat-value">1,967,607</div><div class="nba-stat-note">Account-only, cancelled, lapsed or otherwise non-current trial/paid</div></article>
-          <article class="nba-stat"><div class="nba-stat-label">Payment recovery</div><div class="nba-stat-value">2,299</div><div class="nba-stat-note">0.08% in current unrecovered grace</div></article>
+          <article class="nba-stat"><div class="nba-stat-label">Active or trial members</div><div class="nba-stat-value">1,106,137</div><div class="nba-stat-note">Current trial/paid reconciliation</div></article>
+          <article class="nba-stat"><div class="nba-stat-label">Non members</div><div class="nba-stat-value">1,935,650</div><div class="nba-stat-note">Cancelled, lapsed, unknown or otherwise non-current trial/paid</div></article>
+          <article class="nba-stat"><div class="nba-stat-label">Payment recovery</div><div class="nba-stat-value">2,518</div><div class="nba-stat-note">0.08% current overdue baseline</div></article>
         </div>
       </section>
 
@@ -180,17 +180,17 @@
               </tbody>
             </table>
           </div>
-          <p class="nba-channel-note"><strong>Caveats:</strong> the model uses only data available at the decision time and is a prioritisation tool, not proof that an action causes conversion. Mandatory service communications always take precedence. This displayed aggregate is AWS-only, so canonical GCP subscription, Flybuys, purchase-affinity, and annual-plan inputs still require the governed cross-environment refresh described below. The green-bar reference total is current active or trial members; do not treat it as a final GCP-enriched production audience.</p>
+          <p class="nba-channel-note"><strong>Caveats:</strong> the model uses only data available at the decision time and is a prioritisation tool, not proof that an action causes conversion. Mandatory service communications always take precedence. The audience, subscription mix, overdue baseline, and Flybuys action were refreshed from GCP; the remaining event-driven NBA rows retain the prior rule-driven baseline until the full cross-environment feature refresh is available.</p>
         </div>
       </section>
 
       <section class="nba-grid" aria-label="Action distribution and subscription status">
         <section class="nba-panel" aria-labelledby="action-heading">
           <div class="nba-panel-header"><h2 class="nba-panel-heading" id="action-heading">Next-best-action distribution</h2><span class="nba-panel-subtle">Current trial and active paid members only</span></div>
-          <div class="nba-legend"><span class="nba-legend-swatch" aria-hidden="true"></span><span>Green bars use the 1,097,437 current trial-or-active-paid-member reference total. Account-only, cancelled, lapsed and other non-current states are excluded from the NBA calculation.</span></div>
+          <div class="nba-legend"><span class="nba-legend-swatch" aria-hidden="true"></span><span>Green bars use the 1,106,137 current trial-or-active-paid-member reference total. Account-only, cancelled, lapsed and other non-current states are excluded from the NBA calculation.</span></div>
           <div class="nba-actions">
-            <div class="nba-action-row"><span class="nba-action-label">update_payment</span><span class="nba-track"><span class="nba-fill" style="width:.22%"></span></span><span class="nba-num">2,299</span><span class="nba-pct">0.22%</span></div>
-            <div class="nba-action-row"><span class="nba-action-label">link_flybuys</span><span class="nba-track"><span class="nba-fill" style="width:30.23%"></span></span><span class="nba-num">331,785</span><span class="nba-pct">30.23%</span></div>
+            <div class="nba-action-row"><span class="nba-action-label">update_payment</span><span class="nba-track"><span class="nba-fill" style="width:.23%"></span></span><span class="nba-num">2,518</span><span class="nba-pct">0.23%</span></div>
+            <div class="nba-action-row"><span class="nba-action-label">link_flybuys</span><span class="nba-track"><span class="nba-fill" style="width:30.25%"></span></span><span class="nba-num">334,624</span><span class="nba-pct">30.25%</span></div>
             <div class="nba-action-row"><span class="nba-action-label">link_bunnings</span><span class="nba-track"><span class="nba-fill" style="width:13.80%"></span></span><span class="nba-num">146,827</span><span class="nba-pct">13.80%</span></div>
             <div class="nba-action-row"><span class="nba-action-label">link_kmart</span><span class="nba-track"><span class="nba-fill" style="width:2.60%"></span></span><span class="nba-num">27,658</span><span class="nba-pct">2.60%</span></div>
             <div class="nba-action-row"><span class="nba-action-label">link_target</span><span class="nba-track"><span class="nba-fill" style="width:4.88%"></span></span><span class="nba-num">51,899</span><span class="nba-pct">4.88%</span></div>
@@ -206,10 +206,10 @@
         <aside class="nba-panel" aria-labelledby="status-heading">
           <div class="nba-panel-header"><h2 class="nba-panel-heading" id="status-heading">Current subscription status</h2><span class="nba-panel-subtle">AWS member snapshot</span></div>
           <div class="nba-status">
-            <div class="nba-status-item"><div class="nba-status-label">Current-state source</div><div class="nba-status-value">LATEST_SUBSCRIPTION_STATUS</div><div class="nba-status-detail">The member snapshot is deduplicated by its most recent <code>LAST_UPDATED_AT</code> value.</div></div>
-            <div class="nba-status-item"><div class="nba-status-label">Current status mix</div><div class="nba-status-counts"><div class="nba-status-count"><strong>936,135</strong><span>active (30.88%)</span></div><div class="nba-status-count"><strong>883,105</strong><span>cancelled (29.13%)</span></div><div class="nba-status-count"><strong>735,255</strong><span>unknown (24.25%)</span></div><div class="nba-status-count"><strong>311,939</strong><span>lapsed (10.29%)</span></div><div class="nba-status-count"><strong>127,862</strong><span>trial (4.22%)</span></div><div class="nba-status-count"><strong>2,362</strong><span>overdue (0.08%)</span></div></div><div class="nba-status-detail">Other current states: cancelling 20,084; cancelling trial 14,288; planchanged 574.</div></div>
-            <div class="nba-status-item"><div class="nba-status-label">Most urgent state</div><div class="nba-status-value">2,299 current grace cases</div><div class="nba-status-detail">Latest grace lifecycle event is a commencement within 15 days, with no later recovery, lapse, or cancellation event; current AWS status is overdue.</div></div>
-      <div class="nba-alert">The refreshed 15-day payment-recovery result is 2,299 members, aligning with the expected 2-3k current-grace population. Cancelled, lapsed and other non-current states are excluded from the NBA audience; the 19,207 fully completed in-scope members receive <code>na_complete</code>. These are rule-driven results, not capped audiences.</div>
+            <div class="nba-status-item"><div class="nba-status-label">Current-state source</div><div class="nba-status-value">LATEST_SUBSCRIPTION_STATUS</div><div class="nba-status-detail">The AWS member snapshot is deduplicated by its most recent <code>LAST_UPDATED_AT</code> value; the headline audience was refreshed against the current GCP cohort.</div></div>
+            <div class="nba-status-item"><div class="nba-status-label">Current status mix</div><div class="nba-status-counts"><div class="nba-status-count"><strong>940,322</strong><span>active (30.91%)</span></div><div class="nba-status-count"><strong>884,837</strong><span>cancelled (29.09%)</span></div><div class="nba-status-count"><strong>738,486</strong><span>unknown (24.28%)</span></div><div class="nba-status-count"><strong>312,327</strong><span>lapsed (10.27%)</span></div><div class="nba-status-count"><strong>127,590</strong><span>trial (4.19%)</span></div><div class="nba-status-count"><strong>2,509</strong><span>overdue (0.08%)</span></div></div><div class="nba-status-detail">Other current states: cancelling 20,534; cancelling trial 14,616; planchanged 566.</div></div>
+            <div class="nba-status-item"><div class="nba-status-label">Most urgent state</div><div class="nba-status-value">2,518 current overdue baseline cases</div><div class="nba-status-detail">Current GCP subscription snapshot shows overdue members; the stricter 15-day grace lifecycle subset requires event-level reconciliation.</div></div>
+      <div class="nba-alert">The refreshed current GCP subscription snapshot contains 1,106,137 trial or paid members. The payment-recovery figure shown is the current overdue baseline; the stricter 15-day grace rule remains event-timestamp dependent. Cancelled, lapsed and other non-current states are excluded from the NBA audience.</div>
           </div>
         </aside>
       </section>
@@ -440,8 +440,8 @@
             <table class="nba-timing-table">
               <thead><tr><th>Value</th><th>Braze</th><th>Codex</th><th>% difference</th></tr></thead>
               <tbody>
-                <tr><td><code>flybuys_linked</code></td><td>347,488</td><td>331,785</td><td>-4.52%</td></tr>
-                <tr><td><code>overdue</code></td><td>2,463</td><td>2,362</td><td>-4.10%</td></tr>
+                <tr><td><code>flybuys_linked</code></td><td>347,488</td><td>334,624</td><td>-3.70%</td></tr>
+                <tr><td><code>overdue</code></td><td>2,463</td><td>2,518</td><td>2.23%</td></tr>
                 <tr><td><code>div-bunnings</code></td><td>330,865</td><td>299,613</td><td>-9.45%</td></tr>
                 <tr><td><code>div-kmart</code></td><td>194,386</td><td>175,634</td><td>-9.65%</td></tr>
                 <tr><td><code>div-target</code></td><td>321,152</td><td>301,702</td><td>-6.06%</td></tr>
@@ -472,7 +472,7 @@
         </div>
       </section>
 
-<footer class="nba-footer">Scope: 1,097,437 current trial or active paid members only. Account-only, cancelled, lapsed and other non-current states are excluded from all next-best-action calculations. Flybuys linkage uses current SCD status from <code>OND_PROD.LOYALTY.R_ONP_FLYBUYS_LINKAGE</code>; no AWS Braze custom-event source is used for that calculation.</footer>
+<footer class="nba-footer">Scope: 1,106,137 current trial or active paid members only. Account-only, cancelled, lapsed and other non-current states are excluded from all next-best-action calculations. Flybuys linkage uses current SCD status from <code>OND_PROD.LOYALTY.R_ONP_FLYBUYS_LINKAGE</code>; no AWS Braze custom-event source is used for that calculation.</footer>
     </main>
   </div>
 </section>
